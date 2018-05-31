@@ -1,0 +1,16 @@
+[
+{
+  "modid": "nbttooltip",
+  "name": "NBT Tooltip mod",
+  "description": "Shows item NBT in tooltip when F3+H is enabled",
+  "version": "0.3",
+  "mcversion": "1.12",
+  "url": "https://minecraft.curseforge.com/projects/nbt-tooltip",
+  "updateUrl": "http://zabi.altervista.org/minecraft/nbttooltip/update.json",
+  "authorList": ["ZaBi94"],
+  "credits": "",
+  "logoFile": "",
+  "screenshots": [],
+  "dependencies": []
+}
+]
