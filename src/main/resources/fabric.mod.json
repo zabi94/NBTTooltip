@@ -1,0 +1,16 @@
+{
+  "id": "nbttooltip",
+  "name": "NBT Tooltip",
+  "description": "Add a handy tooltip to items, showing NBT data",
+  "version": "1.0.0",
+  "side": "client",
+  "initializers": [
+    "zabi.minecraft.nbttooltip.NBTTooltip"
+  ],
+  "requires": {
+    "fabric": "*"
+  },
+  "mixins": {
+    "client": "nbttooltip.client.json"
+  }
+}

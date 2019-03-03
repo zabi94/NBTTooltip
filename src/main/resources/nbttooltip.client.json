@@ -1,0 +1,8 @@
+{
+  "required": true,
+  "package": "zabi.minecraft.nbttooltip.mixin",
+  "compatibilityLevel": "JAVA_8",
+  "mixins": [
+    "ClientTicker", "TooltipInjector"
+  ]
+}
