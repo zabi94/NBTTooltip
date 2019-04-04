@@ -87,7 +87,7 @@ public class NBTTooltip implements ModInitializer {
 		if (!ModConfig.requiresf3 || context.isAdvanced()) {
 			ItemStack stack = (ItemStack) stackIn;
 			int lines = ModConfig.maxLinesShown;
-			if (ModConfig.ctrlSuppressesRest && Screen.isControlPressed()) {
+			if (ModConfig.ctrlSuppressesRest && Screen.hasControlDown()) {
 				lines += list.size();
 				list.clear();
 			} else {
