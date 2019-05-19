@@ -6,13 +6,13 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.Screen;
-import net.minecraft.util.GameTaskQueue;
+import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.util.NonBlockingThreadExecutor;
 import zabi.minecraft.nbttooltip.ModConfig;
 import zabi.minecraft.nbttooltip.NBTTooltip;
 
 @Mixin(value = MinecraftClient.class)
-public abstract class ClientTicker extends GameTaskQueue<Runnable> {
+public abstract class ClientTicker extends NonBlockingThreadExecutor<Runnable> {
 
 	public ClientTicker(String string_1) {
 		super(string_1);

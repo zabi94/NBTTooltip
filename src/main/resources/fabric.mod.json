@@ -1,16 +1,35 @@
 {
+  "schemaVersion": 1,
   "id": "nbttooltip",
+  "version": "${version}",
   "name": "NBT Tooltip",
   "description": "Add a handy tooltip to items, showing NBT data",
-  "version": "1.0.1",
-  "side": "client",
-  "initializers": [
-    "zabi.minecraft.nbttooltip.NBTTooltip"
+  "authors": [
+    "Zabi94"
+  ],
+  "contact": {
+  },
+
+  "license": "MIT",
+  "icon": "assets/minervahud/icon.png",
+
+  "environment": "client",
+  "entrypoints": {
+    "main": [
+      "zabi.minecraft.nbttooltip.NBTTooltip"
+    ]
+  },
+  "mixins": [
+  	"nbttooltip.client.json"
   ],
   "requires": {
+    "fabricloader": ">=0.4.0",
     "fabric": "*"
   },
-  "mixins": {
-    "client": "nbttooltip.client.json"
+  "suggests": {
+    "modmenu": ">=1.4.2"
+  },
+  "custom": {
+    "modmenu:clientsideOnly": true
   }
 }
