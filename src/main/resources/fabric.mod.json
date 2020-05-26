@@ -23,11 +23,7 @@
   	"nbttooltip.client.json"
   ],
   "depends": {
-    "fabricloader": ">=0.4.0",
-    "fabric": "*"
-  },
-  "suggests": {
-    "modmenu": ">=1.4.2"
+    "fabricloader": ">=0.4.0"
   },
   "custom": {
     "modmenu:clientsideOnly": true
