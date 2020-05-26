@@ -10,14 +10,14 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.text.Text;
+import net.minecraft.network.chat.Component;
 import zabi.minecraft.nbttooltip.NBTTooltip;
 
 @Mixin(ItemStack.class)
 public abstract class TooltipInjector {
 	
-	@Inject(at = @At("RETURN"), method = "getTooltip", require = 1)
-	public void onInjectTooltip(PlayerEntity player, TooltipContext context, CallbackInfoReturnable<List<Text>> ci) {
+	@Inject(at = @At("RETURN"), method = "getTooltipText")
+	public void onInjectTooltip(PlayerEntity player, TooltipContext context, CallbackInfoReturnable<List<Component>> ci) {
 		NBTTooltip.onInjectTooltip(this, player == null?null:player.world, ci.getReturnValue(), context);
 	}
 	

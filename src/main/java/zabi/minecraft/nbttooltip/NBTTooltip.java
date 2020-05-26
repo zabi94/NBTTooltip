@@ -5,15 +5,15 @@ import java.util.Iterator;
 import java.util.List;
 
 import net.fabricmc.api.ModInitializer;
+import net.minecraft.ChatFormat;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.AbstractListTag;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
-import net.minecraft.text.LiteralText;
-import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
 import net.minecraft.world.World;
 
 public class NBTTooltip implements ModInitializer {
@@ -21,17 +21,17 @@ public class NBTTooltip implements ModInitializer {
 	public static int ticks = 0;
 	public static int line_scrolled = 0;
 	
-	public static final String FORMAT = Formatting.ITALIC.toString()+Formatting.DARK_GRAY;
+	public static final String FORMAT = ChatFormat.ITALIC.toString()+ChatFormat.DARK_GRAY;
 	
 	@Override
 	public void onInitialize() {
 		ModConfig.init();
 	}
 	
-	public static ArrayList<Text> transformTtip(ArrayList<Text> ttip, int lines) {
-		ArrayList<Text> newttip = new ArrayList<Text>(lines);
+	public static ArrayList<Component> transformTtip(ArrayList<Component> ttip, int lines) {
+		ArrayList<Component> newttip = new ArrayList<Component>(lines);
 		if (ModConfig.showSeparator) {
-			newttip.add(new LiteralText("- NBTTooltip -"));
+			newttip.add(new TextComponent("- NBTTooltip -"));
 		}
 		if (ttip.size()>lines) {
 			if (lines+line_scrolled>ttip.size()) line_scrolled = 0;
@@ -46,17 +46,17 @@ public class NBTTooltip implements ModInitializer {
 		}
 	}
 
-	public static void unwrapTag(List<Text> tooltip, Tag base, String pad, String tagName, String padIncrement) {
+	public static void unwrapTag(List<Component> tooltip, Tag base, String pad, String tagName, String padIncrement) {
 		if (base instanceof CompoundTag) {
 			CompoundTag tag = (CompoundTag) base;
 			tag.getKeys().forEach(s -> {
-				boolean nested = (tag.get(s) instanceof AbstractListTag) || (tag.get(s) instanceof CompoundTag);
+				boolean nested = (tag.getTag(s) instanceof AbstractListTag) || (tag.getTag(s) instanceof CompoundTag);
 				if (nested) {
-					tooltip.add(new LiteralText(pad+s+": {"));
-					unwrapTag(tooltip, tag.get(s), pad+padIncrement, s, padIncrement);
-					tooltip.add(new LiteralText(pad+"}"));
+					tooltip.add(new TextComponent(pad+s+": {"));
+					unwrapTag(tooltip, tag.getTag(s), pad+padIncrement, s, padIncrement);
+					tooltip.add(new TextComponent(pad+"}"));
 				} else {
-					addValueToTooltip(tooltip, tag.get(s), s, pad);
+					addValueToTooltip(tooltip, tag.getTag(s), s, pad);
 				}
 			});
 		} else if (base instanceof AbstractListTag) {
@@ -66,11 +66,11 @@ public class NBTTooltip implements ModInitializer {
 			while (iter.hasNext()) {
 				Tag nbtnext = iter.next();
 				if (nbtnext instanceof AbstractListTag || nbtnext instanceof CompoundTag) {
-					tooltip.add(new LiteralText(pad + "["+index+"]: {"));
+					tooltip.add(new TextComponent(pad + "["+index+"]: {"));
 					unwrapTag(tooltip, nbtnext, pad+padIncrement, "", padIncrement);
-					tooltip.add(new LiteralText(pad+"}"));
+					tooltip.add(new TextComponent(pad+"}"));
 				} else {
-					tooltip.add(new LiteralText(pad+"["+index+"] -> "+nbtnext.toString()));
+					tooltip.add(new TextComponent(pad+"["+index+"] -> "+nbtnext.toString()));
 				}
 				index++;
 			}
@@ -79,11 +79,11 @@ public class NBTTooltip implements ModInitializer {
 		}
 	}
 	
-	private static void addValueToTooltip(List<Text> tooltip, Tag nbt, String name, String pad) {
-		tooltip.add(new LiteralText(pad+name+": "+nbt.toString()));
+	private static void addValueToTooltip(List<Component> tooltip, Tag nbt, String name, String pad) {
+		tooltip.add(new TextComponent(pad+name+": "+nbt.toString()));
 	}
 	
-	public static void onInjectTooltip(Object stackIn, World world, List<Text> list, TooltipContext context) {
+	public static void onInjectTooltip(Object stackIn, World world, List<Component> list, TooltipContext context) {
 		if (!ModConfig.requiresf3 || context.isAdvanced()) {
 			ItemStack stack = (ItemStack) stackIn;
 			int lines = ModConfig.maxLinesShown;
@@ -91,27 +91,27 @@ public class NBTTooltip implements ModInitializer {
 				lines += list.size();
 				list.clear();
 			} else {
-				list.add(new LiteralText(""));
+				list.add(new TextComponent(""));
 			}
 			CompoundTag tag = stack.getTag();
-			ArrayList<Text> ttip = new ArrayList<Text>(lines);
+			ArrayList<Component> ttip = new ArrayList<Component>(lines);
 			if (tag!=null) {
 				if (ModConfig.showDelimiters) {
-					ttip.add(new LiteralText(Formatting.DARK_PURPLE+" - nbt start -"));
+					ttip.add(new TextComponent(ChatFormat.DARK_PURPLE+" - nbt start -"));
 				}
 				if (ModConfig.compress) {
-					ttip.add(new LiteralText(FORMAT+tag.toString()));
+					ttip.add(new TextComponent(FORMAT+tag.toString()));
 				} else {
 					NBTTooltip.unwrapTag(ttip, tag, FORMAT, "", ModConfig.compress?"":"  ");
 				}
 				if (ModConfig.showDelimiters) {
-					ttip.add(new LiteralText(Formatting.DARK_PURPLE+" - nbt end -"));
+					ttip.add(new TextComponent(ChatFormat.DARK_PURPLE+" - nbt end -"));
 				}
 				ttip = NBTTooltip.transformTtip(ttip, lines);
 
 				list.addAll(ttip);
 			} else {
-				list.add(new LiteralText(FORMAT+"No NBT tag"));
+				list.add(new TextComponent(FORMAT+"No NBT tag"));
 			}
 		}
 	}
