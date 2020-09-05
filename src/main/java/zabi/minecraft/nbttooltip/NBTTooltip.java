@@ -79,17 +79,17 @@ public class NBTTooltip implements ClientModInitializer {
 		}
 	}
 
-	public static void unwrapTag(List<Text> tooltip, Tag base, String pad, String tagName, String padIncrement) {
+	public static void unwrapTag(List<Text> tooltip, Tag base, String pad, String tagName, String padIncrement, boolean splitLongStrings) {
 		if (base instanceof CompoundTag) {
 			CompoundTag tag = (CompoundTag) base;
 			tag.getKeys().forEach(s -> {
 				boolean nested = (tag.get(s) instanceof AbstractListTag) || (tag.get(s) instanceof CompoundTag);
 				if (nested) {
 					tooltip.add(new LiteralText(pad+s+": {"));
-					unwrapTag(tooltip, tag.get(s), pad+padIncrement, s, padIncrement);
+					unwrapTag(tooltip, tag.get(s), pad+padIncrement, s, padIncrement, splitLongStrings);
 					tooltip.add(new LiteralText(pad+"}"));
 				} else {
-					addValueToTooltip(tooltip, tag.get(s), s, pad);
+					addValueToTooltip(tooltip, tag.get(s), s, pad, splitLongStrings);
 				}
 			});
 		} else if (base instanceof AbstractListTag) {
@@ -100,20 +100,39 @@ public class NBTTooltip implements ClientModInitializer {
 				Tag nbtnext = iter.next();
 				if (nbtnext instanceof AbstractListTag || nbtnext instanceof CompoundTag) {
 					tooltip.add(new LiteralText(pad + "["+index+"]: {"));
-					unwrapTag(tooltip, nbtnext, pad+padIncrement, "", padIncrement);
+					unwrapTag(tooltip, nbtnext, pad+padIncrement, "", padIncrement, splitLongStrings);
 					tooltip.add(new LiteralText(pad+"}"));
 				} else {
-					tooltip.add(new LiteralText(pad+"["+index+"] -> "+nbtnext.toString()));
+					addValueToTooltip(tooltip, nbtnext, "["+index+"]", pad, splitLongStrings);
 				}
 				index++;
 			}
 		} else {
-			addValueToTooltip(tooltip, base, tagName, pad);
+			addValueToTooltip(tooltip, base, tagName, pad, splitLongStrings);
 		}
 	}
 
-	private static void addValueToTooltip(List<Text> tooltip, Tag nbt, String name, String pad) {
-		tooltip.add(new LiteralText(pad+name+": "+nbt.toString()));
+	private static void addValueToTooltip(List<Text> tooltip, Tag nbt, String name, String pad, boolean splitLongStrings) {
+		int limit = 30;
+		String toBeAdded = nbt.toString();
+		if (!splitLongStrings || toBeAdded.length() < limit) {
+			tooltip.add(new LiteralText(pad+name+": "+nbt.toString()));
+		} else {
+			int added = 0;
+			tooltip.add(new LiteralText(pad+name+":"));
+			while (added < toBeAdded.length()) {
+				int nextChunk = Math.min(limit, toBeAdded.length() - added);
+				StringBuilder sb = new StringBuilder(Formatting.AQUA.toString())
+					.append("|")
+					.append(Formatting.RESET.toString())
+					.append(pad)
+					.append("   ")
+					.append(toBeAdded.substring(added, added+nextChunk));
+				tooltip.add(new LiteralText(sb.toString()));
+				added += nextChunk;
+			}
+		}
+		
 	}
 
 	public static void onInjectTooltip(ItemStack stack, TooltipContext context, List<Text> list) {
@@ -135,7 +154,7 @@ public class NBTTooltip implements ClientModInitializer {
 				if (ModConfig.compress) {
 					ttip.add(new LiteralText(FORMAT+tag.toString()));
 				} else {
-					NBTTooltip.unwrapTag(ttip, tag, FORMAT, "", ModConfig.compress?"":"  ");
+					NBTTooltip.unwrapTag(ttip, tag, FORMAT, "", ModConfig.compress?"":"  ", true);
 				}
 				if (ModConfig.showDelimiters) {
 					ttip.add(new LiteralText(Formatting.DARK_PURPLE+" - nbt end -"));
@@ -183,7 +202,7 @@ public class NBTTooltip implements ClientModInitializer {
 			sb.append("\n -- NBT Tag --\n\n{\n");
 			copy.removeIf(t -> t.asString().trim().equals(""));
 			copy.remove(0);
-			unwrapTag(copy, stack.getTag(), "\t", "Item NBT", "\t");
+			unwrapTag(copy, stack.getTag(), "\t", "Item NBT", "\t", false);
 			copy.forEach(t -> {
 				sb.append(t.asString());
 				sb.append("\n");
