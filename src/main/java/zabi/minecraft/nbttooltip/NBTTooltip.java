@@ -4,30 +4,63 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import net.fabricmc.api.ModInitializer;
+import org.lwjgl.glfw.GLFW;
+
+import net.fabricmc.api.ClientModInitializer;
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
+import net.fabricmc.fabric.api.client.item.v1.ItemTooltipCallback;
+import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.item.TooltipContext;
+import net.minecraft.client.options.KeyBinding;
+import net.minecraft.client.resource.language.I18n;
+import net.minecraft.client.toast.SystemToast;
+import net.minecraft.client.toast.SystemToast.Type;
+import net.minecraft.client.util.InputUtil;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.AbstractListTag;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
+import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Formatting;
-import net.minecraft.world.World;
+import net.minecraft.util.registry.Registry;
+import zabi.minecraft.nbttooltip.mixin.NbttooltipKeybindAccessor;
 
-public class NBTTooltip implements ModInitializer {
+public class NBTTooltip implements ClientModInitializer {
 
 	public static int ticks = 0;
 	public static int line_scrolled = 0;
-	
+
 	public static final String FORMAT = Formatting.ITALIC.toString()+Formatting.DARK_GRAY;
-	
+
+	public static KeyBinding COPY_TO_CLIPBOARD = new KeyBinding("key.nbttooltip.right", InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_DOWN, "key.category.nbttooltip");
+	public static boolean flipflop_key_copy = false;
+
 	@Override
-	public void onInitialize() {
+	public void onInitializeClient() {
 		ModConfig.init();
+		ClientTickEvents.END_CLIENT_TICK.register(NBTTooltip::clientTick);
+		ItemTooltipCallback.EVENT.register(NBTTooltip::onInjectTooltip);
+		KeyBindingHelper.registerKeyBinding(COPY_TO_CLIPBOARD);
 	}
-	
+
+	public static void clientTick(MinecraftClient mc) {
+		if (!Screen.hasShiftDown()) {
+			NBTTooltip.ticks++;
+			int factor = 1;
+			if (Screen.hasAltDown()) {
+				factor = 4;
+			}
+			if (NBTTooltip.ticks >= ModConfig.ticksBeforeScroll/factor) {
+				NBTTooltip.ticks = 0;
+				NBTTooltip.line_scrolled++;
+			}
+		}
+	}
+
 	public static ArrayList<Text> transformTtip(ArrayList<Text> ttip, int lines) {
 		ArrayList<Text> newttip = new ArrayList<Text>(lines);
 		if (ModConfig.showSeparator) {
@@ -78,14 +111,14 @@ public class NBTTooltip implements ModInitializer {
 			addValueToTooltip(tooltip, base, tagName, pad);
 		}
 	}
-	
+
 	private static void addValueToTooltip(List<Text> tooltip, Tag nbt, String name, String pad) {
 		tooltip.add(new LiteralText(pad+name+": "+nbt.toString()));
 	}
-	
-	public static void onInjectTooltip(Object stackIn, World world, List<Text> list, TooltipContext context) {
+
+	public static void onInjectTooltip(ItemStack stack, TooltipContext context, List<Text> list) {
+		handleClipboardCopy(stack, list);
 		if (!ModConfig.requiresf3 || context.isAdvanced()) {
-			ItemStack stack = (ItemStack) stackIn;
 			int lines = ModConfig.maxLinesShown;
 			if (ModConfig.ctrlSuppressesRest && Screen.hasControlDown()) {
 				lines += list.size();
@@ -113,6 +146,56 @@ public class NBTTooltip implements ModInitializer {
 			} else {
 				list.add(new LiteralText(FORMAT+"No NBT tag"));
 			}
+		}
+	}
+
+	private static void handleClipboardCopy(ItemStack stack, List<Text> list) {
+		MinecraftClient mc = MinecraftClient.getInstance();
+		
+		if (mc.currentScreen != null) {
+			boolean pressed = InputUtil.isKeyPressed(mc.getWindow().getHandle(), ((NbttooltipKeybindAccessor) COPY_TO_CLIPBOARD).getBoundKey().getCode());
+			if (pressed) {
+				if (!flipflop_key_copy) {
+					flipflop_key_copy = true;
+					copyToClipboard(stack, list, mc);
+				}
+			} else {
+				flipflop_key_copy = false;
+			}
+			
+		}
+	}
+
+	private static void copyToClipboard(ItemStack stack, List<Text> list, MinecraftClient mc) {
+		StringBuilder sb = new StringBuilder();
+		String name = I18n.translate(stack.getTranslationKey());
+		sb.append("Item ID: ");
+		sb.append(Registry.ITEM.getKey(stack.getItem()).map(rk -> rk.getValue().toString()).orElse("ID NOT FOUND IN REGISTRY"));
+		sb.append("\nItem name:");
+		sb.append(name);
+		sb.append("\nAmount: ");
+		sb.append(stack.getCount());
+		sb.append("\n");
+		if (stack.getTag() == null) {
+			sb.append("No Item NBT attached to the stack\n");
+		} else {
+			ArrayList<Text> copy = new ArrayList<>(list);
+			sb.append("\n -- NBT Tag --\n\n{\n");
+			copy.removeIf(t -> t.asString().trim().equals(""));
+			copy.remove(0);
+			unwrapTag(copy, stack.getTag(), "\t", "Item NBT", "\t");
+			copy.forEach(t -> {
+				sb.append(t.asString());
+				sb.append("\n");
+			});
+			sb.append("}\n");
+		}
+		try {
+			mc.keyboard.setClipboard(sb.toString());
+			mc.getToastManager().add(new SystemToast(Type.TUTORIAL_HINT, new TranslatableText("nbttooltip.copied_to_clipboard"), new TranslatableText("nbttooltip.object_details", name)));
+		} catch (Exception e) {
+			mc.getToastManager().add(new SystemToast(Type.TUTORIAL_HINT, new TranslatableText("nbttooltip.copy_failed"), new LiteralText(e.getMessage())));
+			e.printStackTrace();
 		}
 	}
 

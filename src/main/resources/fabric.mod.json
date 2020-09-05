@@ -12,20 +12,19 @@
 
   "license": "MIT",
   "icon": "assets/minervahud/icon.png",
-
+  "mixins": [
+    {
+      "config": "nbttooltip.client.json",
+      "environment": "client"
+    }
+  ],
   "environment": "client",
   "entrypoints": {
-    "main": [
+    "client": [
       "zabi.minecraft.nbttooltip.NBTTooltip"
     ]
   },
-  "mixins": [
-  	"nbttooltip.client.json"
-  ],
   "depends": {
-    "fabricloader": ">=0.4.0"
-  },
-  "custom": {
-    "modmenu:clientsideOnly": true
+    "fabric": "*"
   }
 }
