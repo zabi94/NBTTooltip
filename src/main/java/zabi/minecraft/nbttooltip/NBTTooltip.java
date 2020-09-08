@@ -33,6 +33,7 @@ public class NBTTooltip implements ClientModInitializer {
 
 	public static int ticks = 0;
 	public static int line_scrolled = 0;
+	public static int line_split_threshold = 30;
 
 	public static final String FORMAT = Formatting.ITALIC.toString()+Formatting.DARK_GRAY;
 
@@ -121,15 +122,14 @@ public class NBTTooltip implements ClientModInitializer {
 	}
 
 	private static void addValueToTooltip(List<Text> tooltip, Tag nbt, String name, String pad, boolean splitLongStrings) {
-		int limit = 30;
 		String toBeAdded = nbt.toString();
-		if (!splitLongStrings || toBeAdded.length() < limit) {
+		if (!splitLongStrings || toBeAdded.length() < line_split_threshold) {
 			tooltip.add(new LiteralText(pad+name+": "+nbt.toString()));
 		} else {
 			int added = 0;
 			tooltip.add(new LiteralText(pad+name+":"));
 			while (added < toBeAdded.length()) {
-				int nextChunk = Math.min(limit, toBeAdded.length() - added);
+				int nextChunk = Math.min(line_split_threshold, toBeAdded.length() - added);
 				StringBuilder sb = new StringBuilder(Formatting.AQUA.toString())
 					.append("|")
 					.append(Formatting.RESET.toString())
