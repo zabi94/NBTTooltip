@@ -81,34 +81,42 @@ public class NBTTooltip implements ClientModInitializer {
 
 	public static void unwrapTag(List<Text> tooltip, Tag base, String pad, String tagName, String padIncrement, boolean splitLongStrings) {
 		if (base instanceof CompoundTag) {
-			CompoundTag tag = (CompoundTag) base;
-			tag.getKeys().forEach(s -> {
-				boolean nested = (tag.get(s) instanceof AbstractListTag) || (tag.get(s) instanceof CompoundTag);
-				if (nested) {
-					tooltip.add(new LiteralText(pad+s+": {"));
-					unwrapTag(tooltip, tag.get(s), pad+padIncrement, s, padIncrement, splitLongStrings);
-					tooltip.add(new LiteralText(pad+"}"));
-				} else {
-					addValueToTooltip(tooltip, tag.get(s), s, pad, splitLongStrings);
-				}
-			});
+			addCompoundToTooltip(tooltip, base, pad, padIncrement, splitLongStrings);
 		} else if (base instanceof AbstractListTag) {
-			AbstractListTag<?> tag = (AbstractListTag<?>) base;
-			int index = 0;
-			Iterator<? extends Tag> iter = tag.iterator();
-			while (iter.hasNext()) {
-				Tag nbtnext = iter.next();
-				if (nbtnext instanceof AbstractListTag || nbtnext instanceof CompoundTag) {
-					tooltip.add(new LiteralText(pad + "["+index+"]: {"));
-					unwrapTag(tooltip, nbtnext, pad+padIncrement, "", padIncrement, splitLongStrings);
-					tooltip.add(new LiteralText(pad+"}"));
-				} else {
-					addValueToTooltip(tooltip, nbtnext, "["+index+"]", pad, splitLongStrings);
-				}
-				index++;
-			}
+			addListToTooltip(tooltip, base, pad, padIncrement, splitLongStrings);
 		} else {
 			addValueToTooltip(tooltip, base, tagName, pad, splitLongStrings);
+		}
+	}
+
+	private static void addCompoundToTooltip(List<Text> tooltip, Tag base, String pad, String padIncrement, boolean splitLongStrings) {
+		CompoundTag tag = (CompoundTag) base;
+		tag.getKeys().forEach(s -> {
+			boolean nested = (tag.get(s) instanceof AbstractListTag) || (tag.get(s) instanceof CompoundTag);
+			if (nested) {
+				tooltip.add(new LiteralText(pad+s+": {"));
+				unwrapTag(tooltip, tag.get(s), pad+padIncrement, s, padIncrement, splitLongStrings);
+				tooltip.add(new LiteralText(pad+"}"));
+			} else {
+				addValueToTooltip(tooltip, tag.get(s), s, pad, splitLongStrings);
+			}
+		});
+	}
+
+	private static void addListToTooltip(List<Text> tooltip, Tag base, String pad, String padIncrement, boolean splitLongStrings) {
+		AbstractListTag<?> tag = (AbstractListTag<?>) base;
+		int index = 0;
+		Iterator<? extends Tag> iter = tag.iterator();
+		while (iter.hasNext()) {
+			Tag nbtnext = iter.next();
+			if (nbtnext instanceof AbstractListTag || nbtnext instanceof CompoundTag) {
+				tooltip.add(new LiteralText(pad + "["+index+"]: {"));
+				unwrapTag(tooltip, nbtnext, pad+padIncrement, "", padIncrement, splitLongStrings);
+				tooltip.add(new LiteralText(pad+"}"));
+			} else {
+				addValueToTooltip(tooltip, nbtnext, "["+index+"]", pad, splitLongStrings);
+			}
+			index++;
 		}
 	}
 
@@ -132,7 +140,6 @@ public class NBTTooltip implements ClientModInitializer {
 				added += nextChunk;
 			}
 		}
-		
 	}
 
 	public static void onInjectTooltip(ItemStack stack, TooltipContext context, List<Text> list) {
@@ -160,7 +167,6 @@ public class NBTTooltip implements ClientModInitializer {
 					ttip.add(new LiteralText(Formatting.DARK_PURPLE+" - nbt end -"));
 				}
 				ttip = NBTTooltip.transformTtip(ttip, lines);
-
 				list.addAll(ttip);
 			} else {
 				list.add(new LiteralText(FORMAT+"No NBT tag"));
@@ -170,7 +176,6 @@ public class NBTTooltip implements ClientModInitializer {
 
 	private static void handleClipboardCopy(ItemStack stack, List<Text> list) {
 		MinecraftClient mc = MinecraftClient.getInstance();
-		
 		if (mc.currentScreen != null) {
 			boolean pressed = InputUtil.isKeyPressed(mc.getWindow().getHandle(), ((NbttooltipKeybindAccessor) COPY_TO_CLIPBOARD).getBoundKey().getCode());
 			if (pressed) {
@@ -181,7 +186,6 @@ public class NBTTooltip implements ClientModInitializer {
 			} else {
 				flipflop_key_copy = false;
 			}
-			
 		}
 	}
 
