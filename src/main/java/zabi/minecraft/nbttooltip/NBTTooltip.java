@@ -190,7 +190,7 @@ public class NBTTooltip implements ClientModInitializer {
 		String name = I18n.translate(stack.getTranslationKey());
 		sb.append("Item ID: ");
 		sb.append(Registry.ITEM.getKey(stack.getItem()).map(rk -> rk.getValue().toString()).orElse("ID NOT FOUND IN REGISTRY"));
-		sb.append("\nItem name:");
+		sb.append("\nItem name: ");
 		sb.append(name);
 		sb.append("\nAmount: ");
 		sb.append(stack.getCount());
@@ -201,7 +201,9 @@ public class NBTTooltip implements ClientModInitializer {
 			ArrayList<Text> copy = new ArrayList<>(list);
 			sb.append("\n -- NBT Tag --\n\n{\n");
 			copy.removeIf(t -> t.asString().trim().equals(""));
-			copy.remove(0);
+			if (mc.options.advancedItemTooltips) {
+				copy.remove(0);
+			}
 			unwrapTag(copy, stack.getTag(), "\t", "Item NBT", "\t", false);
 			copy.forEach(t -> {
 				sb.append(t.asString());
