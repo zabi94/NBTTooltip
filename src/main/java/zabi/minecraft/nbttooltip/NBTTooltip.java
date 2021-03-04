@@ -37,7 +37,7 @@ public class NBTTooltip implements ClientModInitializer {
 
 	public static final String FORMAT = Formatting.ITALIC.toString()+Formatting.DARK_GRAY;
 
-	public static KeyBinding COPY_TO_CLIPBOARD = new KeyBinding("key.nbttooltip.right", InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_DOWN, "key.category.nbttooltip");
+	public static KeyBinding COPY_TO_CLIPBOARD = new KeyBinding("key.nbttooltip.copy", InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_DOWN, "key.category.nbttooltip");
 	public static boolean flipflop_key_copy = false;
 
 	@Override

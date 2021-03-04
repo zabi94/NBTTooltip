@@ -1,5 +1,7 @@
 {
 	"nbttooltip.copied_to_clipboard": "Data copied to clipboard",
 	"nbttooltip.object_details": "Item: %s",
-	"nbttooltip.copy_failed": "Copy failed"
+	"nbttooltip.copy_failed": "Copy failed",
+	"key.nbttooltip.copy": "Copy NBT",
+	"key.category.nbttooltip": "NBT Tooltip"
 }
