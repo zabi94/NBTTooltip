@@ -26,7 +26,6 @@ import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Formatting;
-import net.minecraft.util.registry.Registry;
 import zabi.minecraft.nbttooltip.mixin.NbttooltipKeybindAccessor;
 
 public class NBTTooltip implements ClientModInitializer {
@@ -143,7 +142,7 @@ public class NBTTooltip implements ClientModInitializer {
 	}
 
 	public static void onInjectTooltip(ItemStack stack, TooltipContext context, List<Text> list) {
-		handleClipboardCopy(stack, list);
+		handleClipboardCopy(stack);
 		if (!ModConfig.requiresf3 || context.isAdvanced()) {
 			int lines = ModConfig.maxLinesShown;
 			if (ModConfig.ctrlSuppressesRest && Screen.hasControlDown()) {
@@ -174,14 +173,14 @@ public class NBTTooltip implements ClientModInitializer {
 		}
 	}
 
-	private static void handleClipboardCopy(ItemStack stack, List<Text> list) {
+	private static void handleClipboardCopy(ItemStack stack) {
 		MinecraftClient mc = MinecraftClient.getInstance();
 		if (mc.currentScreen != null) {
 			boolean pressed = InputUtil.isKeyPressed(mc.getWindow().getHandle(), ((NbttooltipKeybindAccessor) COPY_TO_CLIPBOARD).getBoundKey().getCode());
 			if (pressed) {
 				if (!flipflop_key_copy) {
 					flipflop_key_copy = true;
-					copyToClipboard(stack, list, mc);
+					copyToClipboard(stack, mc);
 				}
 			} else {
 				flipflop_key_copy = false;
@@ -189,31 +188,18 @@ public class NBTTooltip implements ClientModInitializer {
 		}
 	}
 
-	private static void copyToClipboard(ItemStack stack, List<Text> list, MinecraftClient mc) {
+	private static void copyToClipboard(ItemStack stack, MinecraftClient mc) {
 		StringBuilder sb = new StringBuilder();
 		String name = I18n.translate(stack.getTranslationKey());
-		sb.append("Item ID: ");
-		sb.append(Registry.ITEM.getKey(stack.getItem()).map(rk -> rk.getValue().toString()).orElse("ID NOT FOUND IN REGISTRY"));
-		sb.append("\nItem name: ");
-		sb.append(name);
-		sb.append("\nAmount: ");
-		sb.append(stack.getCount());
-		sb.append("\n");
 		if (stack.getTag() == null) {
-			sb.append("No Item NBT attached to the stack\n");
+			sb.append("{}\n");
 		} else {
-			ArrayList<Text> copy = new ArrayList<>(list);
-			sb.append("\n -- NBT Tag --\n\n{\n");
-			copy.removeIf(t -> t.asString().trim().equals(""));
-			if (mc.options.advancedItemTooltips) {
-				copy.remove(0);
-			}
-			unwrapTag(copy, stack.getTag(), "\t", "Item NBT", "\t", false);
-			copy.forEach(t -> {
+			ArrayList<Text> nbtData = new ArrayList<>();
+			unwrapTag(nbtData, stack.getTag(), "", "Item NBT", "\t", false);
+			nbtData.forEach(t -> {
 				sb.append(t.asString());
 				sb.append("\n");
 			});
-			sb.append("}\n");
 		}
 		try {
 			mc.keyboard.setClipboard(sb.toString());
