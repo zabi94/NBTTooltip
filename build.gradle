@@ -45,7 +45,7 @@ dependencies {
       exclude module: 'roughlyenoughitems-api'
 	}
 	
-	modRuntime("com.terraformersmc:modmenu:${project.modmenu_version}")  {
+	modImplementation("com.terraformersmc:modmenu:${project.modmenu_version}")  {
       exclude module: 'fabric-api'
       exclude module: 'cloth-config-fabric'
       exclude module: 'roughlyenoughitems-api'
