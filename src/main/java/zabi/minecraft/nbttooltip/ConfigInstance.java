@@ -9,8 +9,9 @@ public class ConfigInstance {
 	public boolean compress;
 	public int ticksBeforeScroll;
 	public boolean ctrlSuppressesRest;
+	public boolean splitLongLines;
 	
-	public ConfigInstance(boolean showSeparator, int maxLinesShown, boolean requiresf3, boolean showDelimiters, boolean compress, int ticksBeforeScroll, boolean ctrlSuppressesRest) {
+	public ConfigInstance(boolean showSeparator, int maxLinesShown, boolean requiresf3, boolean showDelimiters, boolean compress, int ticksBeforeScroll, boolean ctrlSuppressesRest, boolean splitLongLines) {
 		super();
 		this.showSeparator = showSeparator;
 		this.maxLinesShown = maxLinesShown;
@@ -19,6 +20,7 @@ public class ConfigInstance {
 		this.compress = compress;
 		this.ticksBeforeScroll = ticksBeforeScroll;
 		this.ctrlSuppressesRest = ctrlSuppressesRest;
+		this.splitLongLines = splitLongLines;
 	}
 	
 }

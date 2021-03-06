@@ -101,7 +101,7 @@ public class NBTTooltip implements ClientModInitializer {
 				if (ModConfig.compress) {
 					ttip.add(new LiteralText(FORMAT+tag.toString()));
 				} else {
-					getRenderingEngine().parseTagToList(ttip, tag, true);
+					getRenderingEngine().parseTagToList(ttip, tag, ModConfig.splitLongLines);
 				}
 				if (ModConfig.showDelimiters) {
 					ttip.add(new LiteralText(Formatting.DARK_PURPLE+" - nbt end -"));

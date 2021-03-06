@@ -21,6 +21,7 @@ public class ModConfig {
 	public static boolean compress;
 	public static int ticksBeforeScroll;
 	public static boolean ctrlSuppressesRest;
+	public static boolean splitLongLines;
 	
 	private static File folder = new File("config");
 	private static Gson config = new GsonBuilder().setPrettyPrinting().create();
@@ -40,6 +41,7 @@ public class ModConfig {
 		ModConfig.showSeparator = true;
 		ModConfig.ticksBeforeScroll = 20;
 		ModConfig.ctrlSuppressesRest = true;
+		ModConfig.splitLongLines = true;
 	}
 	
 	private static void generateFoldersAndFiles() {
@@ -55,7 +57,7 @@ public class ModConfig {
 				try {
 //					System.out.println("Creating new config file");
 					configFile.createNewFile();
-					ConfigInstance def = new ConfigInstance(showSeparator, maxLinesShown, requiresf3, showDelimiters, compress, ticksBeforeScroll, ctrlSuppressesRest);
+					ConfigInstance def = new ConfigInstance(showSeparator, maxLinesShown, requiresf3, showDelimiters, compress, ticksBeforeScroll, ctrlSuppressesRest, splitLongLines);
 					String json = config.toJson(def);
 					FileWriter writer = new FileWriter(configFile);
 					writer.write(json);
@@ -91,6 +93,7 @@ public class ModConfig {
 			compress = instance.compress;
 			requiresf3 = instance.requiresf3;
 			ctrlSuppressesRest = instance.ctrlSuppressesRest;
+			splitLongLines = instance.splitLongLines;
 			
 		} catch (JsonSyntaxException e) {
 			System.err.println("Invalid configuration!");
