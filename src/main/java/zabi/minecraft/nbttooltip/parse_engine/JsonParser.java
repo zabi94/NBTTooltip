@@ -75,20 +75,32 @@ public class JsonParser implements NbtTagParser {
 	}
 	
 	private static void addNamedValueToTooltip(List<Text> tooltip, Tag nbt, String name, String pad, boolean addComma) {
-		String cleanNbt = nbt instanceof StringTag ? nbt.toString() : nbt.toString().substring(0, nbt.toString().length() - 1);
-		cleanNbt = cleanNbt.replaceAll(".\".", "\\\"");
-		tooltip.add(new LiteralText(pad+'"'+name+"\": "+cleanNbt+(addComma ? "," : "")));
+		String cleanString = nbt instanceof StringTag ? escapeChars(nbt.toString()) : nbt.toString().substring(0, nbt.toString().length() - 1);
+		tooltip.add(new LiteralText(pad+'"'+name+"\": "+cleanString+(addComma ? "," : "")));
 	}
 	
 	private static void addValueToTooltip(List<Text> tooltip, Tag nbt, String name, String pad, boolean addComma) {
-		String cleanNbt = nbt.toString();
-		if (nbt instanceof StringTag) {
-			String inner = cleanNbt.substring(1, cleanNbt.length() - 2).replaceAll("\"", "\\\"");
-			cleanNbt = cleanNbt.charAt(0) + inner + cleanNbt.charAt(cleanNbt.length()-1);
-		} else {
-			cleanNbt = cleanNbt.substring(0, nbt.toString().length() - 1);
+		String cleanString = nbt instanceof StringTag ? escapeChars(nbt.toString()) : nbt.toString().substring(0, nbt.toString().length() - 1);
+		tooltip.add(new LiteralText(pad+cleanString+(addComma ? "," : "")));
+	}
+	
+	private static String escapeChars(String in) {
+		if ((in.charAt(0) == '"' && in.charAt(in.length()-1) == '"') || (in.charAt(0) == '\'' && in.charAt(in.length()-1) == '\'')) {
+			in = in.substring(1, in.length() - 1);
 		}
-		tooltip.add(new LiteralText(pad+cleanNbt+(addComma ? "," : "")));
+		StringBuilder sb = new StringBuilder();
+		sb.append('"');
+		for (int i = 0; i < in.length(); i++) {
+			char c = in.charAt(i);
+			if (c == '"') {
+				sb.append('\\');
+				sb.append('"');
+			} else {
+				sb.append(c);
+			}
+		}
+		sb.append('"');
+		return sb.toString();
 	}
 
 }
