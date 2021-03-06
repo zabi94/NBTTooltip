@@ -11,8 +11,8 @@ import net.minecraft.nbt.Tag;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
-import zabi.minecraft.nbttooltip.ModConfig;
 import zabi.minecraft.nbttooltip.NBTTooltip;
+import zabi.minecraft.nbttooltip.config.ModConfig;
 
 public class BWHumanReadableParser implements NbtTagParser {
 	
@@ -23,7 +23,7 @@ public class BWHumanReadableParser implements NbtTagParser {
 		if (tag == null) {
 			list.add(new LiteralText("No NBT tag"));
 		} else {
-			unwrapTag(list, tag, NBTTooltip.FORMAT, "", ModConfig.compress?"":"  ", split);
+			unwrapTag(list, tag, NBTTooltip.FORMAT, "", ModConfig.INSTANCE.compress?"":"  ", split);
 		}
 	}
 	

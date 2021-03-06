@@ -23,9 +23,8 @@ import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Formatting;
+import zabi.minecraft.nbttooltip.config.ModConfig;
 import zabi.minecraft.nbttooltip.mixin.NbttooltipKeybindAccessor;
-import zabi.minecraft.nbttooltip.parse_engine.ColoredHumanReadableParser;
-import zabi.minecraft.nbttooltip.parse_engine.JsonParser;
 import zabi.minecraft.nbttooltip.parse_engine.NbtTagParser;
 
 public class NBTTooltip implements ClientModInitializer {
@@ -37,10 +36,6 @@ public class NBTTooltip implements ClientModInitializer {
 
 	public static KeyBinding COPY_TO_CLIPBOARD = new KeyBinding("key.nbttooltip.copy", InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_DOWN, "key.category.nbttooltip");
 	public static boolean flipflop_key_copy = false;
-	
-//	private static final NbtTagParser blackWhiteParser = new BWHumanReadableParser();
-	private static final NbtTagParser colorParser = new ColoredHumanReadableParser();
-	private static final NbtTagParser jsonParser = new JsonParser();
 	
 	@Override
 	public void onInitializeClient() {
@@ -57,7 +52,7 @@ public class NBTTooltip implements ClientModInitializer {
 			if (Screen.hasAltDown()) {
 				factor = 4;
 			}
-			if (NBTTooltip.ticks >= ModConfig.ticksBeforeScroll/factor) {
+			if (NBTTooltip.ticks >= ModConfig.INSTANCE.ticksBeforeScroll/factor) {
 				NBTTooltip.ticks = 0;
 				NBTTooltip.line_scrolled++;
 			}
@@ -66,7 +61,7 @@ public class NBTTooltip implements ClientModInitializer {
 
 	public static ArrayList<Text> transformTtip(ArrayList<Text> ttip, int lines) {
 		ArrayList<Text> newttip = new ArrayList<Text>(lines);
-		if (ModConfig.showSeparator) {
+		if (ModConfig.INSTANCE.showSeparator) {
 			newttip.add(new LiteralText("- NBTTooltip -"));
 		}
 		if (ttip.size()>lines) {
@@ -84,9 +79,9 @@ public class NBTTooltip implements ClientModInitializer {
 
 	public static void onInjectTooltip(ItemStack stack, TooltipContext context, List<Text> list) {
 		handleClipboardCopy(stack);
-		if (!ModConfig.requiresf3 || context.isAdvanced()) {
-			int lines = ModConfig.maxLinesShown;
-			if (ModConfig.ctrlSuppressesRest && Screen.hasControlDown()) {
+		if (!ModConfig.INSTANCE.requiresf3 || context.isAdvanced()) {
+			int lines = ModConfig.INSTANCE.maxLinesShown;
+			if (ModConfig.INSTANCE.ctrlSuppressesRest && Screen.hasControlDown()) {
 				lines += list.size();
 				list.clear();
 			} else {
@@ -95,15 +90,15 @@ public class NBTTooltip implements ClientModInitializer {
 			CompoundTag tag = stack.getTag();
 			ArrayList<Text> ttip = new ArrayList<Text>(lines);
 			if (tag!=null) {
-				if (ModConfig.showDelimiters) {
+				if (ModConfig.INSTANCE.showDelimiters) {
 					ttip.add(new LiteralText(Formatting.DARK_PURPLE+" - nbt start -"));
 				}
-				if (ModConfig.compress) {
+				if (ModConfig.INSTANCE.compress) {
 					ttip.add(new LiteralText(FORMAT+tag.toString()));
 				} else {
-					getRenderingEngine().parseTagToList(ttip, tag, ModConfig.splitLongLines);
+					getRenderingEngine().parseTagToList(ttip, tag, ModConfig.INSTANCE.splitLongLines);
 				}
-				if (ModConfig.showDelimiters) {
+				if (ModConfig.INSTANCE.showDelimiters) {
 					ttip.add(new LiteralText(Formatting.DARK_PURPLE+" - nbt end -"));
 				}
 				ttip = NBTTooltip.transformTtip(ttip, lines);
@@ -148,11 +143,11 @@ public class NBTTooltip implements ClientModInitializer {
 	}
 	
 	private static NbtTagParser getRenderingEngine() {
-		return colorParser;
+		return ModConfig.INSTANCE.tooltipEngine.getEngine();
 	}
 	
 	private static NbtTagParser getCopyingEngine() {
-		return jsonParser;
+		return ModConfig.INSTANCE.copyingEngine.getEngine();
 	}
 
 }

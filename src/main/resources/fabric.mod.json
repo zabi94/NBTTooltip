@@ -22,6 +22,9 @@
   "entrypoints": {
     "client": [
       "zabi.minecraft.nbttooltip.NBTTooltip"
+    ],
+    "modmenu": [
+      "zabi.minecraft.nbttooltip.config.ConfigScreenProvider"
     ]
   },
   "depends": {

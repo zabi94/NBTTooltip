@@ -12,7 +12,7 @@ import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Formatting;
-import zabi.minecraft.nbttooltip.ModConfig;
+import zabi.minecraft.nbttooltip.config.ModConfig;
 
 public class ColoredHumanReadableParser implements NbtTagParser {
 	
@@ -28,7 +28,7 @@ public class ColoredHumanReadableParser implements NbtTagParser {
 		if (tag == null) {
 			list.add(new LiteralText("No NBT tag").formatted(Formatting.DARK_GRAY));
 		} else {
-			unwrapTag(list, tag, "", "", ModConfig.compress?"":"  ", split);
+			unwrapTag(list, tag, "", "", ModConfig.INSTANCE.compress?"":"  ", split);
 		}
 	}
 	

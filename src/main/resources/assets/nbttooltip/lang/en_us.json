@@ -3,5 +3,46 @@
 	"nbttooltip.object_details": "Item: %s",
 	"nbttooltip.copy_failed": "Copy failed",
 	"key.nbttooltip.copy": "Copy NBT",
-	"key.category.nbttooltip": "NBT Tooltip"
+	"key.category.nbttooltip": "NBT Tooltip",
+	
+	"nbttooltip.config.showseparator": "Show separator",
+	"nbttooltip.config.showseparator.line1": "Prints '- NBTTooltip -' before the NBT tag.",
+	"nbttooltip.config.showseparator.line2": "This tag doesn't scroll with the text.",
+	
+	"nbttooltip.config.compress": "Compress text horizontally",
+	"nbttooltip.config.compress.line1": "The text won't have indentation and will.",
+	"nbttooltip.config.compress.line2": "all align to the left margin.",
+	
+	"nbttooltip.config.requiresf3": "Require F3 + H enabled",
+	"nbttooltip.config.requiresf3.line1": "When enabled this will show the NBT tag",
+	"nbttooltip.config.requiresf3.line2": "only if advanced tooltips are enabled.",
+	
+	"nbttooltip.config.showDelimiters": "Show delimiters",
+	"nbttooltip.config.showDelimiters.line1": "Prints '- NBT start -' and '- NBT end -'.",
+	"nbttooltip.config.showDelimiters.line2": "inside the tag, scrolling with the rest.",
+	
+	"nbttooltip.config.ctrlSuppressesRest": "NBT only with CTRL",
+	"nbttooltip.config.ctrlSuppressesRest.line1": "Allows to only show the NBT part of a tooltip",
+	"nbttooltip.config.ctrlSuppressesRest.line2": "when holding CTRL down, hiding the rest.",
+	
+	"nbttooltip.config.splitLongLines": "Split long lines",
+	"nbttooltip.config.splitLongLines.line1": "Divides long lines into multiple ones and",
+	"nbttooltip.config.splitLongLines.line2": "places a sing at the beginning of each part.",
+	
+	"nbttooltip.config.maxLinesShown": "Maximum NBT lines",
+	"nbttooltip.config.maxLinesShown.line1": "The maximum amount of lines shown in a",
+	"nbttooltip.config.maxLinesShown.line2": "tooltip before it starts scrolling.",
+	
+	"nbttooltip.config.ticksBeforeScroll": "Scroll delay",
+	"nbttooltip.config.ticksBeforeScroll.line1": "The amount of ticks after which a new line",
+	"nbttooltip.config.ticksBeforeScroll.line2": "is shown when the tooltip is too long.",
+	
+	"nbttooltip.config.tooltipEngine": "Tooltip presentation",
+	"nbttooltip.config.tooltipEngine.line1": "FRIENDLY uses a human-readable format for tooltips",
+	"nbttooltip.config.tooltipEngine.line2": "JSON uses the standard JSON format for files.",
+	
+	"nbttooltip.config.copyingEngine": "Copy format",
+	"nbttooltip.config.copyingEngine.line1": "FRIENDLY uses a human-readable format to copy nbt",
+	"nbttooltip.config.copyingEngine.line2": "JSON uses the standard JSON format for files."
+	
 }

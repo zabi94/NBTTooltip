@@ -11,7 +11,7 @@ import net.minecraft.nbt.StringTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
-import zabi.minecraft.nbttooltip.ModConfig;
+import zabi.minecraft.nbttooltip.config.ModConfig;
 
 public class JsonParser implements NbtTagParser {
 	
@@ -21,7 +21,7 @@ public class JsonParser implements NbtTagParser {
 			list.add(new LiteralText("{}"));
 		} else {
 			list.add(new LiteralText("{"));
-			unwrapTag(list, tag, "", "", ModConfig.compress?"":"  ");
+			unwrapTag(list, tag, "", "", ModConfig.INSTANCE.compress?"":"  ");
 			list.add(new LiteralText("}"));
 		}
 	}
