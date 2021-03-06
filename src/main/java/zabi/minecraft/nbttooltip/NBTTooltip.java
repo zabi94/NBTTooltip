@@ -24,8 +24,8 @@ import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Formatting;
 import zabi.minecraft.nbttooltip.mixin.NbttooltipKeybindAccessor;
-import zabi.minecraft.nbttooltip.parse_engine.BWHumanReadableParser;
 import zabi.minecraft.nbttooltip.parse_engine.ColoredHumanReadableParser;
+import zabi.minecraft.nbttooltip.parse_engine.JsonParser;
 import zabi.minecraft.nbttooltip.parse_engine.NbtTagParser;
 
 public class NBTTooltip implements ClientModInitializer {
@@ -38,9 +38,9 @@ public class NBTTooltip implements ClientModInitializer {
 	public static KeyBinding COPY_TO_CLIPBOARD = new KeyBinding("key.nbttooltip.copy", InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_DOWN, "key.category.nbttooltip");
 	public static boolean flipflop_key_copy = false;
 	
-	private static final NbtTagParser blackWhiteParser = new BWHumanReadableParser();
+//	private static final NbtTagParser blackWhiteParser = new BWHumanReadableParser();
 	private static final NbtTagParser colorParser = new ColoredHumanReadableParser();
-//	private static final NbtTagParser json_p = new JsonParser();
+	private static final NbtTagParser jsonParser = new JsonParser();
 	
 	@Override
 	public void onInitializeClient() {
@@ -152,7 +152,7 @@ public class NBTTooltip implements ClientModInitializer {
 	}
 	
 	private static NbtTagParser getCopyingEngine() {
-		return blackWhiteParser;
+		return jsonParser;
 	}
 
 }
