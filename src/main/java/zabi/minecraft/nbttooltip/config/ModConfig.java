@@ -23,6 +23,9 @@ public class ModConfig {
 		loadDefaults();
 		generateFoldersAndFiles();
 		readJson();
+		if (INSTANCE.triggerType == null) {
+			INSTANCE.triggerType = TriggerType.F3H;
+		}
 		writeJson(); //Write to file new config options
 	}
 

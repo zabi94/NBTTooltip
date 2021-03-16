@@ -7,9 +7,9 @@ import zabi.minecraft.nbttooltip.parse_engine.NbtTagParser;
 
 public class ConfigInstance {
 
+	public TriggerType triggerType;
 	public boolean showSeparator;
 	public int maxLinesShown;
-	public boolean requiresf3;
 	public boolean showDelimiters;
 	public boolean compress;
 	public int ticksBeforeScroll;
@@ -22,7 +22,7 @@ public class ConfigInstance {
 	public ConfigInstance() {
 		maxLinesShown = 10;
 		compress = false;
-		requiresf3 = true;
+		triggerType = TriggerType.F3H;
 		showDelimiters = true;
 		showSeparator = true;
 		ticksBeforeScroll = 20;

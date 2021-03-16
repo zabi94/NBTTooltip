@@ -3,6 +3,7 @@
 	"nbttooltip.object_details": "Item: %s",
 	"nbttooltip.copy_failed": "Copy failed",
 	"key.nbttooltip.copy": "Copy NBT",
+	"key.nbttooltip.toggle": "Toggle NBT",
 	"key.category.nbttooltip": "NBT Tooltip",
 	
 	"nbttooltip.config.showseparator": "Show separator",
@@ -13,9 +14,9 @@
 	"nbttooltip.config.compress.line1": "The text won't have indentation and will.",
 	"nbttooltip.config.compress.line2": "all align to the left margin.",
 	
-	"nbttooltip.config.requiresf3": "Require F3 + H enabled",
-	"nbttooltip.config.requiresf3.line1": "When enabled this will show the NBT tag",
-	"nbttooltip.config.requiresf3.line2": "only if advanced tooltips are enabled.",
+	"nbttooltip.config.triggerType": "Trigger Type",
+	"nbttooltip.config.triggerType.line1": "Determines when the tooltip should be shown. The key used for",
+	"nbttooltip.config.triggerType.line2": "key-based triggers is configurable through the controls menu.",
 	
 	"nbttooltip.config.showDelimiters": "Show delimiters",
 	"nbttooltip.config.showDelimiters.line1": "Prints '- NBT start -' and '- NBT end -'.",

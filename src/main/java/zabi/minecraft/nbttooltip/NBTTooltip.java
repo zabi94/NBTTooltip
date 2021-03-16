@@ -35,7 +35,12 @@ public class NBTTooltip implements ClientModInitializer {
 	public static final String FORMAT = Formatting.ITALIC.toString()+Formatting.DARK_GRAY;
 
 	public static KeyBinding COPY_TO_CLIPBOARD = new KeyBinding("key.nbttooltip.copy", InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_DOWN, "key.category.nbttooltip");
+	public static KeyBinding TOGGLE_NBT = new KeyBinding("key.nbttooltip.toggle", InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_UP, "key.category.nbttooltip");
 	public static boolean flipflop_key_copy = false;
+	public static boolean flipflop_key_toggle = false;
+	
+	public static boolean nbtKeyToggled = false;
+	public static boolean nbtKeyPressed = false;
 	
 	@Override
 	public void onInitializeClient() {
@@ -43,6 +48,7 @@ public class NBTTooltip implements ClientModInitializer {
 		ClientTickEvents.END_CLIENT_TICK.register(NBTTooltip::clientTick);
 		ItemTooltipCallback.EVENT.register(NBTTooltip::onInjectTooltip);
 		KeyBindingHelper.registerKeyBinding(COPY_TO_CLIPBOARD);
+		KeyBindingHelper.registerKeyBinding(TOGGLE_NBT);
 	}
 
 	public static void clientTick(MinecraftClient mc) {
@@ -57,6 +63,18 @@ public class NBTTooltip implements ClientModInitializer {
 				NBTTooltip.line_scrolled++;
 			}
 		}
+		
+		if (InputUtil.isKeyPressed(mc.getWindow().getHandle(), InputUtil.fromTranslationKey(TOGGLE_NBT.getBoundKeyTranslationKey()).getCode())) {
+			if (!flipflop_key_toggle) {
+				nbtKeyToggled = !nbtKeyToggled;
+			}
+			flipflop_key_toggle = true;
+			nbtKeyPressed = true;
+		} else {
+			flipflop_key_toggle = false;
+			nbtKeyPressed = false;
+		}
+		
 	}
 
 	public static ArrayList<Text> transformTtip(ArrayList<Text> ttip, int lines) {
@@ -79,7 +97,7 @@ public class NBTTooltip implements ClientModInitializer {
 
 	public static void onInjectTooltip(ItemStack stack, TooltipContext context, List<Text> list) {
 		handleClipboardCopy(stack);
-		if (!ModConfig.INSTANCE.requiresf3 || context.isAdvanced()) {
+		if (ModConfig.INSTANCE.triggerType.shouldShowTooltip(context)) {
 			int lines = ModConfig.INSTANCE.maxLinesShown;
 			if (ModConfig.INSTANCE.ctrlSuppressesRest && Screen.hasControlDown()) {
 				lines += list.size();

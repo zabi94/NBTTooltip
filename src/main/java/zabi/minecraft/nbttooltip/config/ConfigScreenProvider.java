@@ -44,13 +44,13 @@ public class ConfigScreenProvider implements ModMenuApi {
 		);
 		
 		general.addEntry(configBuilder.entryBuilder()
-				.startBooleanToggle(new TranslatableText("nbttooltip.config.requiresf3") , ModConfig.INSTANCE.requiresf3)
-					.setDefaultValue(true)
+				.startEnumSelector(new TranslatableText("nbttooltip.config.triggerType"), TriggerType.class, ModConfig.INSTANCE.triggerType)
+					.setDefaultValue(TriggerType.F3H)
 					.setTooltip(
-							new TranslatableText("nbttooltip.config.requiresf3.line1"),
-							new TranslatableText("nbttooltip.config.requiresf3.line2") 
+							new TranslatableText("nbttooltip.config.triggerType.line1"),
+							new TranslatableText("nbttooltip.config.triggerType.line2") 
 					)
-					.setSaveConsumer(val -> {ModConfig.INSTANCE.requiresf3 = val;})
+					.setSaveConsumer(val -> {ModConfig.INSTANCE.triggerType = val;})
 					.build()
 		);
 		
