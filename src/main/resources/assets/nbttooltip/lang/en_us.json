@@ -21,8 +21,8 @@
 	"nbttooltip.config.showDelimiters.line1": "Prints '- NBT start -' and '- NBT end -'.",
 	"nbttooltip.config.showDelimiters.line2": "inside the tag, scrolling with the rest.",
 	
-	"nbttooltip.config.ctrlSuppressesRest": "NBT only with CTRL",
-	"nbttooltip.config.ctrlSuppressesRest.line1": "Allows to only show the NBT part of a tooltip",
+	"nbttooltip.config.ctrlSuppressesRest": "Just NBT with CTRL",
+	"nbttooltip.config.ctrlSuppressesRest.line1": "Allows to show just the NBT part of a tooltip",
 	"nbttooltip.config.ctrlSuppressesRest.line2": "when holding CTRL down, hiding the rest.",
 	
 	"nbttooltip.config.splitLongLines": "Split long lines",
