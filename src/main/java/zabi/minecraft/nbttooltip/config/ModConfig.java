@@ -11,6 +11,9 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
 
+import zabi.minecraft.nbttooltip.config.ConfigInstance.CopyingEngine;
+import zabi.minecraft.nbttooltip.config.ConfigInstance.TooltipEngine;
+
 
 public class ModConfig {
 
@@ -25,6 +28,12 @@ public class ModConfig {
 		readJson();
 		if (INSTANCE.triggerType == null) {
 			INSTANCE.triggerType = TriggerType.F3H;
+		}
+		if (INSTANCE.tooltipEngine == null) {
+			INSTANCE.tooltipEngine = TooltipEngine.FRIENDLY;
+		}
+		if (INSTANCE.copyingEngine == null) {
+			INSTANCE.copyingEngine = CopyingEngine.FRIENDLY;
 		}
 		writeJson(); //Write to file new config options
 	}
