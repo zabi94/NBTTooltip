@@ -3,6 +3,7 @@ package zabi.minecraft.nbttooltip.config;
 import zabi.minecraft.nbttooltip.parse_engine.BWHumanReadableParser;
 import zabi.minecraft.nbttooltip.parse_engine.ColoredHumanReadableParser;
 import zabi.minecraft.nbttooltip.parse_engine.JsonParser;
+import zabi.minecraft.nbttooltip.parse_engine.NativeParser;
 import zabi.minecraft.nbttooltip.parse_engine.NbtTagParser;
 
 public class ConfigInstance {
@@ -52,6 +53,7 @@ public class ConfigInstance {
 	public static enum CopyingEngine {
 		
 		FRIENDLY(new BWHumanReadableParser()), 
+		MC_GIVE_CMD(new NativeParser()),
 		JSON(new JsonParser());
 		
 		private NbtTagParser parser;
