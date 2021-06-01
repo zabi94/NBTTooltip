@@ -40,6 +40,9 @@ public class NativeParser implements NbtTagParser {
 	}
 
 	private String unwrapCompound(CompoundTag tag) {
+		if (tag.getKeys().size() == 0) {
+			return "";
+		}
 		StringBuilder sb = new StringBuilder();
 		for (String s:tag.getKeys()) {
 			sb.append(s);
@@ -51,6 +54,9 @@ public class NativeParser implements NbtTagParser {
 	}
 
 	private String unwrapList(AbstractListTag<?> tag) {
+		if (tag.size() == 0) {
+			return "";
+		}
 		StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < tag.size() - 1; i++) {
 			sb.append(unwrap((Tag) tag.get(i)));
