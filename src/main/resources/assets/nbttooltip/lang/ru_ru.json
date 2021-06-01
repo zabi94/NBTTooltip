@@ -1,0 +1,49 @@
+{
+	"nbttooltip.copied_to_clipboard": "Данные скопированы",
+	"nbttooltip.object_details": "Предмет: %s",
+	"nbttooltip.copy_failed": "Ошибка копирования",
+	"key.nbttooltip.copy": "Копировать nbt",
+	"key.nbttooltip.toggle": "Переключить nbt",
+	"key.category.nbttooltip": "NBT Tooltip",
+	
+	"nbttooltip.config.showseparator": "Отображать разделитель",
+	"nbttooltip.config.showseparator.line1": "Выводит '- NBTTooltip -' перед nbt-тегами.",
+	"nbttooltip.config.showseparator.line2": "Эта надпись не прокручивается вместе с nbt.",
+	
+	"nbttooltip.config.compress": "Отображать данные горизонтально",
+	"nbttooltip.config.compress.line1": "Данные не будут иметь отступов",
+	"nbttooltip.config.compress.line2": "и будут выравнены по левому краю.",
+	
+	"nbttooltip.config.triggerType": "Тип переключения",
+	"nbttooltip.config.triggerType.line1": "Определяет, когда должна отображаться всплывающая подсказка.",
+	"nbttooltip.config.triggerType.line2": "Кнопка для отображения по нажатию настраивается в меню управления.",
+	
+	"nbttooltip.config.showDelimiters": "Отображать ограничители",
+	"nbttooltip.config.showDelimiters.line1": "Выводит '- NBT start -' и '- NBT end -' на границах тегов.",
+	"nbttooltip.config.showDelimiters.line2": "Надписи прокручиваются вместе с основными данными.",
+	
+	"nbttooltip.config.ctrlSuppressesRest": "Только nbt по Ctrl",
+	"nbttooltip.config.ctrlSuppressesRest.line1": "Позволяет отображать только nbt при нажатой Ctrl,",
+	"nbttooltip.config.ctrlSuppressesRest.line2": "скрывая остальные данные из подсказки.",
+	
+	"nbttooltip.config.splitLongLines": "Разделение длинных строк",
+	"nbttooltip.config.splitLongLines.line1": "Разделяет длинные строки на несколько,",
+	"nbttooltip.config.splitLongLines.line2": "размещая пометку перед началом каждой.",
+	
+	"nbttooltip.config.maxLinesShown": "Максимум строк nbt",
+	"nbttooltip.config.maxLinesShown.line1": "Предельное число строк, отображаемых в подсказке,",
+	"nbttooltip.config.maxLinesShown.line2": "при которых данные не прокручиваются.",
+	
+	"nbttooltip.config.ticksBeforeScroll": "Задержка прокрутки",
+	"nbttooltip.config.ticksBeforeScroll.line1": "Интервал времени (в тиках), после которого активируется",
+	"nbttooltip.config.ticksBeforeScroll.line2": "прокрутка, если всплывающая подсказка слишком длинная. ",
+	
+	"nbttooltip.config.tooltipEngine": "Представление данных",
+	"nbttooltip.config.tooltipEngine.line1": "FRIENDLY использует удобочитаемый формат подсказок.",
+	"nbttooltip.config.tooltipEngine.line2": "JSON использует обычный формат JSON для файлов.",
+	
+	"nbttooltip.config.copyingEngine": "Формат копирования",
+	"nbttooltip.config.copyingEngine.line1": "FRIENDLY копирует удобочитаемый формат nbt.",
+	"nbttooltip.config.copyingEngine.line2": "JSON копирует обычный формат JSON для файлов."
+	
+}
