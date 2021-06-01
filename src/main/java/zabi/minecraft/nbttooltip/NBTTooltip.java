@@ -34,13 +34,21 @@ public class NBTTooltip implements ClientModInitializer {
 
 	public static final String FORMAT = Formatting.ITALIC.toString()+Formatting.DARK_GRAY;
 
-	public static KeyBinding COPY_TO_CLIPBOARD = new KeyBinding("key.nbttooltip.copy", InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_DOWN, "key.category.nbttooltip");
-	public static KeyBinding TOGGLE_NBT = new KeyBinding("key.nbttooltip.toggle", InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_UP, "key.category.nbttooltip");
+	public static final int WAITTIME_BEFORE_FAST_SCROLL = 20;
+
+	public static KeyBinding COPY_TO_CLIPBOARD = new KeyBinding("key.nbttooltip.copy", InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_RIGHT, "key.category.nbttooltip");
+	public static KeyBinding TOGGLE_NBT = new KeyBinding("key.nbttooltip.toggle", InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_LEFT, "key.category.nbttooltip");
+	public static KeyBinding SCROLL_UP = new KeyBinding("key.nbttooltip.scroll_up", InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_UP, "key.category.nbttooltip");
+	public static KeyBinding SCROLL_DOWN = new KeyBinding("key.nbttooltip.scroll_down", InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_DOWN, "key.category.nbttooltip");
+
 	public static boolean flipflop_key_copy = false;
 	public static boolean flipflop_key_toggle = false;
 	
 	public static boolean nbtKeyToggled = false;
 	public static boolean nbtKeyPressed = false;
+
+	public static int fast_scroll_warmup = 0;
+	public static int autoscroll_cooldown = 0;
 	
 	@Override
 	public void onInitializeClient() {
@@ -49,10 +57,12 @@ public class NBTTooltip implements ClientModInitializer {
 		ItemTooltipCallback.EVENT.register(NBTTooltip::onInjectTooltip);
 		KeyBindingHelper.registerKeyBinding(COPY_TO_CLIPBOARD);
 		KeyBindingHelper.registerKeyBinding(TOGGLE_NBT);
+		KeyBindingHelper.registerKeyBinding(SCROLL_DOWN);
+		KeyBindingHelper.registerKeyBinding(SCROLL_UP);
 	}
 
 	public static void clientTick(MinecraftClient mc) {
-		if (!Screen.hasShiftDown()) {
+		if (!Screen.hasShiftDown() && !isPressed(mc, SCROLL_DOWN) && !isPressed(mc, SCROLL_UP) && autoscroll_cooldown == 0) {
 			NBTTooltip.ticks++;
 			int factor = 1;
 			if (Screen.hasAltDown()) {
@@ -64,7 +74,7 @@ public class NBTTooltip implements ClientModInitializer {
 			}
 		}
 		
-		if (InputUtil.isKeyPressed(mc.getWindow().getHandle(), InputUtil.fromTranslationKey(TOGGLE_NBT.getBoundKeyTranslationKey()).getCode())) {
+		if (isPressed(mc, TOGGLE_NBT)) {
 			if (!flipflop_key_toggle) {
 				nbtKeyToggled = !nbtKeyToggled;
 			}
@@ -74,7 +84,31 @@ public class NBTTooltip implements ClientModInitializer {
 			flipflop_key_toggle = false;
 			nbtKeyPressed = false;
 		}
-		
+
+
+		if (!isPressed(mc, SCROLL_DOWN) && isPressed(mc, SCROLL_UP) && line_scrolled > 0 && cooldownTimeAcceptable()) {
+			line_scrolled--;
+		}
+
+		if (isPressed(mc, SCROLL_DOWN) && !isPressed(mc, SCROLL_UP) && cooldownTimeAcceptable()) {
+			line_scrolled++;
+		}
+
+		if (isPressed(mc, SCROLL_DOWN) || isPressed(mc, SCROLL_UP)) {
+			if (fast_scroll_warmup < WAITTIME_BEFORE_FAST_SCROLL) fast_scroll_warmup++;
+			autoscroll_cooldown = 30;
+		} else {
+			if (autoscroll_cooldown > 0) autoscroll_cooldown--;
+			fast_scroll_warmup = 0;
+		}
+	}
+
+	private static boolean cooldownTimeAcceptable() {
+		return fast_scroll_warmup == 0 || fast_scroll_warmup >= WAITTIME_BEFORE_FAST_SCROLL;
+	}
+
+	private static boolean isPressed(MinecraftClient mc, KeyBinding key) {
+		return InputUtil.isKeyPressed(mc.getWindow().getHandle(), InputUtil.fromTranslationKey(key.getBoundKeyTranslationKey()).getCode());
 	}
 
 	public static ArrayList<Text> transformTtip(ArrayList<Text> ttip, int lines) {
@@ -83,7 +117,13 @@ public class NBTTooltip implements ClientModInitializer {
 			newttip.add(new LiteralText("- NBTTooltip -"));
 		}
 		if (ttip.size()>lines) {
-			if (lines+line_scrolled>ttip.size()) line_scrolled = 0;
+			if (lines+line_scrolled>ttip.size()) {
+				if (isPressed(MinecraftClient.getInstance(), SCROLL_DOWN)) {
+					line_scrolled = ttip.size() - lines;
+				} else {
+					line_scrolled = 0;
+				}
+			}
 			for (int i = 0; i < lines; i++) {
 				newttip.add(ttip.get(i+line_scrolled));
 			}

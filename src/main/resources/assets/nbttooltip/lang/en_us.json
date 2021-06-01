@@ -5,6 +5,8 @@
 	"key.nbttooltip.copy": "Copy NBT",
 	"key.nbttooltip.toggle": "Toggle NBT",
 	"key.category.nbttooltip": "NBT Tooltip",
+	"key.nbttooltip.scroll_down": "Scroll NBT down",
+	"key.nbttooltip.scroll_up": "Scroll NBT up",
 	
 	"nbttooltip.config.showseparator": "Show separator",
 	"nbttooltip.config.showseparator.line1": "Prints '- NBTTooltip -' before the NBT tag.",
