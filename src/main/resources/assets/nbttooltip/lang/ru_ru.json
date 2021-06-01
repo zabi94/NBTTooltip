@@ -5,6 +5,8 @@
 	"key.nbttooltip.copy": "Копировать nbt",
 	"key.nbttooltip.toggle": "Переключить nbt",
 	"key.category.nbttooltip": "NBT Tooltip",
+	"key.nbttooltip.scroll_down": "Прокрутить nbt вниз",
+	"key.nbttooltip.scroll_up": "Прокрутить nbt вверх",
 	
 	"nbttooltip.config.showseparator": "Отображать разделитель",
 	"nbttooltip.config.showseparator.line1": "Выводит '- NBTTooltip -' перед nbt-тегами.",
