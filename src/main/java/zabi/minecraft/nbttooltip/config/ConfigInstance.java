@@ -33,7 +33,7 @@ public class ConfigInstance {
 		copyingEngine = CopyingEngine.JSON;
 	}
 	
-	public static enum TooltipEngine {
+	public enum TooltipEngine {
 		
 		FRIENDLY(new ColoredHumanReadableParser()), 
 		FRIENDLY_NO_COLOR(new BWHumanReadableParser()), 
@@ -41,7 +41,7 @@ public class ConfigInstance {
 		
 		private NbtTagParser parser;
 		
-		private TooltipEngine(NbtTagParser parser) {
+		TooltipEngine(NbtTagParser parser) {
 			this.parser = parser;
 		}
 		
@@ -50,7 +50,7 @@ public class ConfigInstance {
 		}
 	}
 	
-	public static enum CopyingEngine {
+	public enum CopyingEngine {
 		
 		FRIENDLY(new BWHumanReadableParser()), 
 		MC_GIVE_CMD(new NativeParser()),
@@ -58,7 +58,7 @@ public class ConfigInstance {
 		
 		private NbtTagParser parser;
 		
-		private CopyingEngine(NbtTagParser parser) {
+		CopyingEngine(NbtTagParser parser) {
 			this.parser = parser;
 		}
 		

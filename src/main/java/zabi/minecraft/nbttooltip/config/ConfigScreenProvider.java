@@ -17,7 +17,7 @@ public class ConfigScreenProvider implements ModMenuApi {
 		ConfigBuilder configBuilder = ConfigBuilder.create()
 				.setTitle(new TranslatableText("key.category.nbttooltip"))
 				.setEditable(true)
-				.setSavingRunnable(() -> ModConfig.writeJson());
+				.setSavingRunnable(ModConfig::writeJson);
 		
 		ConfigCategory general = configBuilder.getOrCreateCategory(new TranslatableText("nbttooltip.config.general"));
 		
@@ -28,7 +28,7 @@ public class ConfigScreenProvider implements ModMenuApi {
 							new TranslatableText("nbttooltip.config.showseparator.line1"),
 							new TranslatableText("nbttooltip.config.showseparator.line2") 
 					)
-					.setSaveConsumer(val -> {ModConfig.INSTANCE.showSeparator = val;})
+					.setSaveConsumer(val -> ModConfig.INSTANCE.showSeparator = val)
 					.build()
 		);
 		
@@ -39,7 +39,7 @@ public class ConfigScreenProvider implements ModMenuApi {
 							new TranslatableText("nbttooltip.config.compress.line1"),
 							new TranslatableText("nbttooltip.config.compress.line2") 
 					)
-					.setSaveConsumer(val -> {ModConfig.INSTANCE.compress = val;})
+					.setSaveConsumer(val -> ModConfig.INSTANCE.compress = val)
 					.build()
 		);
 		
@@ -50,7 +50,7 @@ public class ConfigScreenProvider implements ModMenuApi {
 							new TranslatableText("nbttooltip.config.triggerType.line1"),
 							new TranslatableText("nbttooltip.config.triggerType.line2") 
 					)
-					.setSaveConsumer(val -> {ModConfig.INSTANCE.triggerType = val;})
+					.setSaveConsumer(val -> ModConfig.INSTANCE.triggerType = val)
 					.build()
 		);
 		
@@ -61,7 +61,7 @@ public class ConfigScreenProvider implements ModMenuApi {
 							new TranslatableText("nbttooltip.config.showDelimiters.line1"),
 							new TranslatableText("nbttooltip.config.showDelimiters.line2") 
 					)
-					.setSaveConsumer(val -> {ModConfig.INSTANCE.showDelimiters = val;})
+					.setSaveConsumer(val -> ModConfig.INSTANCE.showDelimiters = val)
 					.build()
 		);
 		
@@ -72,7 +72,7 @@ public class ConfigScreenProvider implements ModMenuApi {
 							new TranslatableText("nbttooltip.config.ctrlSuppressesRest.line1"),
 							new TranslatableText("nbttooltip.config.ctrlSuppressesRest.line2") 
 					)
-					.setSaveConsumer(val -> {ModConfig.INSTANCE.ctrlSuppressesRest = val;})
+					.setSaveConsumer(val -> ModConfig.INSTANCE.ctrlSuppressesRest = val)
 					.build()
 		);
 		
@@ -83,7 +83,7 @@ public class ConfigScreenProvider implements ModMenuApi {
 							new TranslatableText("nbttooltip.config.splitLongLines.line1"),
 							new TranslatableText("nbttooltip.config.splitLongLines.line2") 
 					)
-					.setSaveConsumer(val -> {ModConfig.INSTANCE.splitLongLines = val;})
+					.setSaveConsumer(val -> ModConfig.INSTANCE.splitLongLines = val)
 					.build()
 		);
 		
@@ -94,7 +94,7 @@ public class ConfigScreenProvider implements ModMenuApi {
 							new TranslatableText("nbttooltip.config.maxLinesShown.line1"),
 							new TranslatableText("nbttooltip.config.maxLinesShown.line2") 
 					)
-					.setSaveConsumer(val -> {ModConfig.INSTANCE.maxLinesShown = val;})
+					.setSaveConsumer(val -> ModConfig.INSTANCE.maxLinesShown = val)
 					.build()
 		);
 		
@@ -107,7 +107,7 @@ public class ConfigScreenProvider implements ModMenuApi {
 							new TranslatableText("nbttooltip.config.ticksBeforeScroll.line1"),
 							new TranslatableText("nbttooltip.config.ticksBeforeScroll.line2") 
 					)
-					.setSaveConsumer(val -> {ModConfig.INSTANCE.ticksBeforeScroll = val;})
+					.setSaveConsumer(val -> ModConfig.INSTANCE.ticksBeforeScroll = val)
 					.build()
 		);
 		
@@ -118,7 +118,7 @@ public class ConfigScreenProvider implements ModMenuApi {
 						new TranslatableText("nbttooltip.config.tooltipEngine.line1"),
 						new TranslatableText("nbttooltip.config.tooltipEngine.line2") 
 				)
-				.setSaveConsumer(val -> {ModConfig.INSTANCE.tooltipEngine = val;})
+				.setSaveConsumer(val -> ModConfig.INSTANCE.tooltipEngine = val)
 				.build()
 		);
 		
@@ -129,7 +129,7 @@ public class ConfigScreenProvider implements ModMenuApi {
 						new TranslatableText("nbttooltip.config.copyingEngine.line1"),
 						new TranslatableText("nbttooltip.config.copyingEngine.line2") 
 				)
-				.setSaveConsumer(val -> {ModConfig.INSTANCE.copyingEngine = val;})
+				.setSaveConsumer(val -> ModConfig.INSTANCE.copyingEngine = val)
 				.build()
 		);
 		
@@ -138,9 +138,7 @@ public class ConfigScreenProvider implements ModMenuApi {
 	
 	@Override
 	public ConfigScreenFactory<?> getModConfigScreenFactory() {
-		return parent -> {
-			return builder().setParentScreen(parent).build();
-		};
+		return parent -> builder().setParentScreen(parent).build();
 	}
 
 }

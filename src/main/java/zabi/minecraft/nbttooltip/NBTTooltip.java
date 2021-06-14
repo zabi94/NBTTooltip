@@ -12,13 +12,13 @@ import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.item.TooltipContext;
-import net.minecraft.client.options.KeyBinding;
+import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.resource.language.I18n;
 import net.minecraft.client.toast.SystemToast;
 import net.minecraft.client.toast.SystemToast.Type;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
@@ -112,7 +112,7 @@ public class NBTTooltip implements ClientModInitializer {
 	}
 
 	public static ArrayList<Text> transformTtip(ArrayList<Text> ttip, int lines) {
-		ArrayList<Text> newttip = new ArrayList<Text>(lines);
+		ArrayList<Text> newttip = new ArrayList<>(lines);
 		if (ModConfig.INSTANCE.showSeparator) {
 			newttip.add(new LiteralText("- NBTTooltip -"));
 		}
@@ -145,14 +145,14 @@ public class NBTTooltip implements ClientModInitializer {
 			} else {
 				list.add(new LiteralText(""));
 			}
-			CompoundTag tag = stack.getTag();
-			ArrayList<Text> ttip = new ArrayList<Text>(lines);
+			NbtCompound tag = stack.getTag();
+			ArrayList<Text> ttip = new ArrayList<>(lines);
 			if (tag!=null) {
 				if (ModConfig.INSTANCE.showDelimiters) {
 					ttip.add(new LiteralText(Formatting.DARK_PURPLE+" - nbt start -"));
 				}
 				if (ModConfig.INSTANCE.compress) {
-					ttip.add(new LiteralText(FORMAT+tag.toString()));
+					ttip.add(new LiteralText(FORMAT+ tag));
 				} else {
 					getRenderingEngine().parseTagToList(ttip, tag, ModConfig.INSTANCE.splitLongLines);
 				}
