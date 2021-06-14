@@ -73,12 +73,11 @@ public class BWHumanReadableParser implements NbtTagParser {
 			tooltip.add(new LiteralText(pad+name+":"));
 			while (added < toBeAdded.length()) {
 				int nextChunk = Math.min(line_split_threshold, toBeAdded.length() - added);
-				String sb = Formatting.AQUA +
-						"|" +
-						Formatting.RESET +
-						pad +
-						"   " +
-						toBeAdded.substring(added, added + nextChunk);
+				String sb = new StringBuilder()
+						.append(Formatting.AQUA).append("|")
+						.append(Formatting.RESET).append(pad)
+						.append("   ")
+						.append(toBeAdded, added, added + nextChunk).toString();
 				tooltip.add(new LiteralText(sb));
 				added += nextChunk;
 			}
