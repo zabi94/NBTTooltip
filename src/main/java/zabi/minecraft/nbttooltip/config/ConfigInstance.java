@@ -33,7 +33,7 @@ public class ConfigInstance {
 		copyingEngine = CopyingEngine.JSON;
 	}
 	
-	public enum TooltipEngine {
+	public static enum TooltipEngine {
 		
 		FRIENDLY(new ColoredHumanReadableParser()), 
 		FRIENDLY_NO_COLOR(new BWHumanReadableParser()), 
@@ -50,7 +50,7 @@ public class ConfigInstance {
 		}
 	}
 	
-	public enum CopyingEngine {
+	public static enum CopyingEngine {
 		
 		FRIENDLY(new BWHumanReadableParser()), 
 		MC_GIVE_CMD(new NativeParser()),
