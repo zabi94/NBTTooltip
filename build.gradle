@@ -25,7 +25,6 @@ repositories {
     	name = "Cloth+REI"
     	url = "https://maven.shedaniel.me/"
     }
-	maven { url = "https://www.cursemaven.com" }
 }
 
 dependencies {
@@ -40,8 +39,13 @@ dependencies {
       exclude module: 'roughlyenoughitems-api'
     }
 
-	modRuntime "curse.maven:roughlyenoughitems-310111:3340543"
-	modRuntime "curse.maven:architectury-419697:3346439"
+	modCompileOnly("me.shedaniel:RoughlyEnoughItems-api-fabric:${project.rei_version}") {
+		exclude module: 'fabric-api'
+	}
+
+	modRuntime("me.shedaniel:RoughlyEnoughItems-fabric:${project.rei_version}") {
+		exclude module: 'fabric-api'
+	}
 
 	modImplementation("com.terraformersmc:modmenu:${project.modmenu_version}")  {
       exclude module: 'fabric-api'
