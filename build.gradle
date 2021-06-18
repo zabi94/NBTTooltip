@@ -1,9 +1,9 @@
 plugins {
-	id 'fabric-loom' version '0.6-SNAPSHOT'
+	id 'fabric-loom' version '0.8-SNAPSHOT'
 }
 
-sourceCompatibility = 1.8
-targetCompatibility = 1.8
+sourceCompatibility = JavaVersion.VERSION_16
+targetCompatibility = JavaVersion.VERSION_16
 
 version = "${mod_version}-fabric"
 archivesBaseName = "nbttooltip"
@@ -38,13 +38,15 @@ dependencies {
       exclude module: 'cloth-config-fabric'
       exclude module: 'roughlyenoughitems-api'
     }
-    
-	modRuntime("me.shedaniel:RoughlyEnoughItems:${project.rei_version}") {
-	  exclude module: 'fabric-api'
-      exclude module: 'cloth-config-fabric'
-      exclude module: 'roughlyenoughitems-api'
+
+	modCompileOnly("me.shedaniel:RoughlyEnoughItems-api-fabric:${project.rei_version}") {
+		exclude module: 'fabric-api'
 	}
-	
+
+	modRuntime("me.shedaniel:RoughlyEnoughItems-fabric:${project.rei_version}") {
+		exclude module: 'fabric-api'
+	}
+
 	modImplementation("com.terraformersmc:modmenu:${project.modmenu_version}")  {
       exclude module: 'fabric-api'
       exclude module: 'cloth-config-fabric'
@@ -59,13 +61,8 @@ dependencies {
 processResources {
 	inputs.property "version", project.version
 
-	from(sourceSets.main.resources.srcDirs) {
-		include "fabric.mod.json"
+	filesMatching("fabric.mod.json") {
 		expand "version": project.version
-	}
-
-	from(sourceSets.main.resources.srcDirs) {
-		exclude "fabric.mod.json"
 	}
 }
 

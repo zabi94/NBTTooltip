@@ -41,7 +41,7 @@ public class ConfigInstance {
 		
 		private NbtTagParser parser;
 		
-		private TooltipEngine(NbtTagParser parser) {
+		TooltipEngine(NbtTagParser parser) {
 			this.parser = parser;
 		}
 		
@@ -58,7 +58,7 @@ public class ConfigInstance {
 		
 		private NbtTagParser parser;
 		
-		private CopyingEngine(NbtTagParser parser) {
+		CopyingEngine(NbtTagParser parser) {
 			this.parser = parser;
 		}
 		

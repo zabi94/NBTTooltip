@@ -4,42 +4,35 @@ import java.util.List;
 
 import org.jetbrains.annotations.Nullable;
 
-import net.minecraft.nbt.AbstractListTag;
-import net.minecraft.nbt.AbstractNumberTag;
-import net.minecraft.nbt.ByteArrayTag;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.IntArrayTag;
-import net.minecraft.nbt.LongArrayTag;
-import net.minecraft.nbt.StringTag;
-import net.minecraft.nbt.Tag;
+import net.minecraft.nbt.*;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 
 public class NativeParser implements NbtTagParser {
 	
 	@Override
-	public void parseTagToList(List<Text> list, @Nullable Tag tag, boolean split) {
+	public void parseTagToList(List<Text> list, @Nullable NbtElement tag, boolean split) {
 		if (tag == null) {
 			list.add(new LiteralText("{}"));
 		} else {
 			list.add(new LiteralText(unwrap(tag)));
 		}
 	}
-	
-	public String unwrap(Tag tag) {
-		if (tag instanceof AbstractNumberTag) {
+
+	public String unwrap(NbtElement tag) {
+		if (tag instanceof AbstractNbtNumber) {
 			return stripTypeIdentifier(tag.toString());
-		} else if (tag instanceof StringTag) {
+		} else if (tag instanceof NbtString) {
 			return tag.toString();
-		} else if (tag instanceof AbstractListTag) {
-			return String.format("[%s%s]", listIdentifier((AbstractListTag<?>) tag), unwrapList((AbstractListTag<?>) tag));
-		} else if (tag instanceof CompoundTag) {
-			return String.format("{%s}", unwrapCompound((CompoundTag) tag));
+		} else if (tag instanceof AbstractNbtList) {
+			return String.format("[%s%s]", listIdentifier((AbstractNbtList<?>) tag), unwrapList((AbstractNbtList<?>) tag));
+		} else if (tag instanceof NbtCompound) {
+			return String.format("{%s}", unwrapCompound((NbtCompound) tag));
 		}
 		return "";
 	}
 
-	private String unwrapCompound(CompoundTag tag) {
+	private String unwrapCompound(NbtCompound tag) {
 		if (tag.getKeys().size() == 0) {
 			return "";
 		}
@@ -50,28 +43,28 @@ public class NativeParser implements NbtTagParser {
 			sb.append(unwrap(tag.get(s)));
 			sb.append(",");
 		}
-		return sb.toString().substring(0, sb.toString().length() - 1); //Remove last comma
+		return sb.substring(0, sb.toString().length() - 1); //Remove last comma
 	}
 
-	private String unwrapList(AbstractListTag<?> tag) {
+	private String unwrapList(AbstractNbtList<?> tag) {
 		if (tag.size() == 0) {
 			return "";
 		}
 		StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < tag.size() - 1; i++) {
-			sb.append(unwrap((Tag) tag.get(i)));
+			sb.append(unwrap(tag.get(i)));
 			sb.append(',');
 		}
-		sb.append(unwrap((Tag) tag.get(tag.size() - 1)));
+		sb.append(unwrap(tag.get(tag.size() - 1)));
 		return sb.toString();
 	}
 	
-	private String listIdentifier(AbstractListTag<?> tag) {
-		if (tag instanceof ByteArrayTag) {
+	private String listIdentifier(AbstractNbtList<?> tag) {
+		if (tag instanceof NbtByteArray) {
 			return "B;";
-		} else if (tag instanceof IntArrayTag) {
+		} else if (tag instanceof NbtIntArray) {
 			return "I;";
-		} else if (tag instanceof LongArrayTag) {
+		} else if (tag instanceof NbtLongArray) {
 			return "L;";
 		} else return "";
 	}
@@ -81,6 +74,6 @@ public class NativeParser implements NbtTagParser {
 		if (last >= '0' && last <= '9') return string;
 		return string.substring(0, string.length() - 1);
 	}
-	
-	
+
+
 }
