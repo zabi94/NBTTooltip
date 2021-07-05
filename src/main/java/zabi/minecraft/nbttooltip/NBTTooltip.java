@@ -48,7 +48,7 @@ public class NBTTooltip implements ClientModInitializer {
 	public static boolean nbtKeyPressed = false;
 
 	public static int fast_scroll_warmup = 0;
-	public static int autoscroll_cooldown = 0;
+	public static int autoscroll_locks = 0;
 	
 	@Override
 	public void onInitializeClient() {
@@ -62,7 +62,10 @@ public class NBTTooltip implements ClientModInitializer {
 	}
 
 	public static void clientTick(MinecraftClient mc) {
-		if (!Screen.hasShiftDown() && !isPressed(mc, SCROLL_DOWN) && !isPressed(mc, SCROLL_UP) && autoscroll_cooldown == 0) {
+		
+		if (autoscroll_locks > 0) autoscroll_locks--;
+		
+		if (!Screen.hasShiftDown() && !isPressed(mc, SCROLL_DOWN) && !isPressed(mc, SCROLL_UP) && autoscroll_locks == 0) {
 			NBTTooltip.ticks++;
 			int factor = 1;
 			if (Screen.hasAltDown()) {
@@ -96,9 +99,8 @@ public class NBTTooltip implements ClientModInitializer {
 
 		if (isPressed(mc, SCROLL_DOWN) || isPressed(mc, SCROLL_UP)) {
 			if (fast_scroll_warmup < WAITTIME_BEFORE_FAST_SCROLL) fast_scroll_warmup++;
-			autoscroll_cooldown = 30;
+			autoscroll_locks = 2;
 		} else {
-			if (autoscroll_cooldown > 0) autoscroll_cooldown--;
 			fast_scroll_warmup = 0;
 		}
 	}
@@ -138,6 +140,7 @@ public class NBTTooltip implements ClientModInitializer {
 	public static void onInjectTooltip(ItemStack stack, TooltipContext context, List<Text> list) {
 		handleClipboardCopy(stack);
 		if (ModConfig.INSTANCE.triggerType.shouldShowTooltip(context)) {
+			if (autoscroll_locks > 0) autoscroll_locks = 2;
 			int lines = ModConfig.INSTANCE.maxLinesShown;
 			if (ModConfig.INSTANCE.ctrlSuppressesRest && Screen.hasControlDown()) {
 				lines += list.size();
