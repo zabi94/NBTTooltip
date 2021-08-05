@@ -73,7 +73,9 @@ public class NBTTooltip implements ClientModInitializer {
 			}
 			if (NBTTooltip.ticks >= ModConfig.INSTANCE.ticksBeforeScroll/factor) {
 				NBTTooltip.ticks = 0;
-				NBTTooltip.line_scrolled++;
+				if (ModConfig.INSTANCE.ticksBeforeScroll > 0) {
+					NBTTooltip.line_scrolled++;
+				}
 			}
 		}
 		
