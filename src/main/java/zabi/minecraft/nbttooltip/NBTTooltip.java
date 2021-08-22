@@ -24,7 +24,6 @@ import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Formatting;
 import zabi.minecraft.nbttooltip.config.ModConfig;
-import zabi.minecraft.nbttooltip.mixin.NbttooltipKeybindAccessor;
 import zabi.minecraft.nbttooltip.parse_engine.NbtTagParser;
 
 public class NBTTooltip implements ClientModInitializer {
@@ -112,7 +111,7 @@ public class NBTTooltip implements ClientModInitializer {
 	}
 
 	private static boolean isPressed(MinecraftClient mc, KeyBinding key) {
-		return InputUtil.isKeyPressed(mc.getWindow().getHandle(), InputUtil.fromTranslationKey(key.getBoundKeyTranslationKey()).getCode());
+		return !key.isUnbound() && InputUtil.isKeyPressed(mc.getWindow().getHandle(), InputUtil.fromTranslationKey(key.getBoundKeyTranslationKey()).getCode());
 	}
 
 	public static ArrayList<Text> transformTtip(ArrayList<Text> ttip, int lines) {
@@ -175,8 +174,7 @@ public class NBTTooltip implements ClientModInitializer {
 	private static void handleClipboardCopy(ItemStack stack) {
 		MinecraftClient mc = MinecraftClient.getInstance();
 		if (mc.currentScreen != null) {
-			boolean pressed = InputUtil.isKeyPressed(mc.getWindow().getHandle(), ((NbttooltipKeybindAccessor) COPY_TO_CLIPBOARD).getBoundKey().getCode());
-			if (pressed) {
+			if (isPressed(mc, COPY_TO_CLIPBOARD)) {
 				if (!flipflop_key_copy) {
 					flipflop_key_copy = true;
 					copyToClipboard(stack, mc);

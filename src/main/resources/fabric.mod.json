@@ -9,15 +9,8 @@
   ],
   "contact": {
   },
-
   "license": "MIT",
   "icon": "assets/minervahud/icon.png",
-  "mixins": [
-    {
-      "config": "nbttooltip.client.json",
-      "environment": "client"
-    }
-  ],
   "environment": "client",
   "entrypoints": {
     "client": [
