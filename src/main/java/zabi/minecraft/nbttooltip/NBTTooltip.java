@@ -5,6 +5,8 @@ import java.util.List;
 
 import org.lwjgl.glfw.GLFW;
 
+import de.klotzi111.ktig.api.KTIG;
+import de.klotzi111.ktig.api.KeyBindingTriggerPoints;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.item.v1.ItemTooltipCallback;
@@ -33,85 +35,88 @@ public class NBTTooltip implements ClientModInitializer {
 
 	public static final String FORMAT = Formatting.ITALIC.toString()+Formatting.DARK_GRAY;
 
-	public static final int WAITTIME_BEFORE_FAST_SCROLL = 20;
-
 	public static KeyBinding COPY_TO_CLIPBOARD = new KeyBinding("key.nbttooltip.copy", InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_RIGHT, "key.category.nbttooltip");
 	public static KeyBinding TOGGLE_NBT = new KeyBinding("key.nbttooltip.toggle", InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_LEFT, "key.category.nbttooltip");
 	public static KeyBinding SCROLL_UP = new KeyBinding("key.nbttooltip.scroll_up", InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_UP, "key.category.nbttooltip");
 	public static KeyBinding SCROLL_DOWN = new KeyBinding("key.nbttooltip.scroll_down", InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_DOWN, "key.category.nbttooltip");
 
-	public static boolean flipflop_key_copy = false;
-	public static boolean flipflop_key_toggle = false;
-	
 	public static boolean nbtKeyToggled = false;
 	public static boolean nbtKeyPressed = false;
 
-	public static int fast_scroll_warmup = 0;
-	public static int autoscroll_locks = 0;
+	public static boolean manual_scroll = false;
+	public static ItemStack last_tooltip_stack = null;
+	
+	private static void registerKeyBinding(KeyBinding keyBinding) {
+		KeyBindingHelper.registerKeyBinding(keyBinding);
+		KTIG.registerKeyBindingForTriggerPoints(keyBinding, KeyBindingTriggerPoints.MAIN_WINDOW_BIT | KeyBindingTriggerPoints.NO_VANILLA_BIT);
+	}
 	
 	@Override
 	public void onInitializeClient() {
 		ModConfig.init();
 		ClientTickEvents.END_CLIENT_TICK.register(NBTTooltip::clientTick);
 		ItemTooltipCallback.EVENT.register(NBTTooltip::onInjectTooltip);
-		KeyBindingHelper.registerKeyBinding(COPY_TO_CLIPBOARD);
-		KeyBindingHelper.registerKeyBinding(TOGGLE_NBT);
-		KeyBindingHelper.registerKeyBinding(SCROLL_DOWN);
-		KeyBindingHelper.registerKeyBinding(SCROLL_UP);
+		registerKeyBinding(COPY_TO_CLIPBOARD);
+		registerKeyBinding(TOGGLE_NBT);
+		registerKeyBinding(SCROLL_DOWN);
+		registerKeyBinding(SCROLL_UP);
 	}
 
 	public static void clientTick(MinecraftClient mc) {
 		
-		if (autoscroll_locks > 0) autoscroll_locks--;
+		if(manual_scroll && Screen.hasShiftDown()) {
+			// activate the auto scroll again when pressing shift
+			manual_scroll = false;
+		}
 		
-		if (!Screen.hasShiftDown() && !isPressed(mc, SCROLL_DOWN) && !isPressed(mc, SCROLL_UP) && autoscroll_locks == 0) {
-			NBTTooltip.ticks++;
+		int scroll_down_count = KTIG.getPressedCount(SCROLL_DOWN);
+		int scroll_up_count = KTIG.getPressedCount(SCROLL_UP);
+		
+		//for toggle
+		if (KTIG.wasKeyBindingPressed(TOGGLE_NBT)) {
+			nbtKeyToggled = !nbtKeyToggled;
+		}
+		//for press
+		nbtKeyPressed = isPressed(mc, TOGGLE_NBT);
+
+		//fast scroll now comes from the repeat events of the keys
+		int scroll_count = scroll_down_count - scroll_up_count;
+		
+		int line_scrolled_before = line_scrolled;
+		//add scroll amount but make sure we never go negativ
+		line_scrolled = Math.max(line_scrolled + scroll_count, 0);
+
+		if (line_scrolled_before != line_scrolled) {
+			//we did scroll
+			manual_scroll = true;
+		}
+
+		
+		if (!manual_scroll && !Screen.hasShiftDown() && scroll_down_count == 0 && scroll_up_count == 0) {
+			ticks++;
 			int factor = 1;
 			if (Screen.hasAltDown()) {
 				factor = 4;
 			}
-			if (NBTTooltip.ticks >= ModConfig.INSTANCE.ticksBeforeScroll/factor) {
-				NBTTooltip.ticks = 0;
+			if (ticks >= ModConfig.INSTANCE.ticksBeforeScroll/factor) {
+				ticks = 0;
 				if (ModConfig.INSTANCE.ticksBeforeScroll > 0) {
-					NBTTooltip.line_scrolled++;
+					line_scrolled++;
 				}
 			}
 		}
 		
-		if (isPressed(mc, TOGGLE_NBT)) {
-			if (!flipflop_key_toggle) {
-				nbtKeyToggled = !nbtKeyToggled;
-			}
-			flipflop_key_toggle = true;
-			nbtKeyPressed = true;
-		} else {
-			flipflop_key_toggle = false;
-			nbtKeyPressed = false;
-		}
-
-
-		if (!isPressed(mc, SCROLL_DOWN) && isPressed(mc, SCROLL_UP) && line_scrolled > 0 && cooldownTimeAcceptable()) {
-			line_scrolled--;
-		}
-
-		if (isPressed(mc, SCROLL_DOWN) && !isPressed(mc, SCROLL_UP) && cooldownTimeAcceptable()) {
-			line_scrolled++;
-		}
-
-		if (isPressed(mc, SCROLL_DOWN) || isPressed(mc, SCROLL_UP)) {
-			if (fast_scroll_warmup < WAITTIME_BEFORE_FAST_SCROLL) fast_scroll_warmup++;
-			autoscroll_locks = 2;
-		} else {
-			fast_scroll_warmup = 0;
-		}
-	}
-
-	private static boolean cooldownTimeAcceptable() {
-		return fast_scroll_warmup == 0 || fast_scroll_warmup >= WAITTIME_BEFORE_FAST_SCROLL;
 	}
 
 	private static boolean isPressed(MinecraftClient mc, KeyBinding key) {
-		return !key.isUnbound() && InputUtil.isKeyPressed(mc.getWindow().getHandle(), InputUtil.fromTranslationKey(key.getBoundKeyTranslationKey()).getCode());
+		//mc is now unused can could be removed from the method signature
+		//or isPressed() could be called directly on the keybinding instead of calling this methods
+		
+		//this is not only less code and easier to read but most importantly it works as it should
+		//the old code caused GL ERRORs every tick when the keybinding was bound to a mouse button (or to something else from other mods)
+		//the keybinding normally only gets triggered when the key is pressed while NO gui is currently active (so this would not work)...
+		//... But we use KTIG. This will allow the keybindings to be triggered even while having a screen (gui) open
+		return key.isPressed();
 	}
 
 	public static ArrayList<Text> transformTtip(ArrayList<Text> ttip, int lines) {
@@ -121,7 +126,7 @@ public class NBTTooltip implements ClientModInitializer {
 		}
 		if (ttip.size()>lines) {
 			if (lines+line_scrolled>ttip.size()) {
-				if (isPressed(MinecraftClient.getInstance(), SCROLL_DOWN)) {
+				if (manual_scroll) {
 					line_scrolled = ttip.size() - lines;
 				} else {
 					line_scrolled = 0;
@@ -141,7 +146,12 @@ public class NBTTooltip implements ClientModInitializer {
 	public static void onInjectTooltip(ItemStack stack, TooltipContext context, List<Text> list) {
 		handleClipboardCopy(stack);
 		if (ModConfig.INSTANCE.triggerType.shouldShowTooltip(context)) {
-			if (autoscroll_locks > 0) autoscroll_locks = 2;
+			if(last_tooltip_stack != stack) {
+				//we now show the tooltip of a different item
+				manual_scroll = false;
+				last_tooltip_stack = stack;
+			}
+			
 			int lines = ModConfig.INSTANCE.maxLinesShown;
 			if (ModConfig.INSTANCE.ctrlSuppressesRest && Screen.hasControlDown()) {
 				lines += list.size();
@@ -174,13 +184,8 @@ public class NBTTooltip implements ClientModInitializer {
 	private static void handleClipboardCopy(ItemStack stack) {
 		MinecraftClient mc = MinecraftClient.getInstance();
 		if (mc.currentScreen != null) {
-			if (isPressed(mc, COPY_TO_CLIPBOARD)) {
-				if (!flipflop_key_copy) {
-					flipflop_key_copy = true;
-					copyToClipboard(stack, mc);
-				}
-			} else {
-				flipflop_key_copy = false;
+			if (KTIG.wasKeyBindingPressed(COPY_TO_CLIPBOARD)) {
+				copyToClipboard(stack, mc);
 			}
 		}
 	}

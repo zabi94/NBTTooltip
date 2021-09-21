@@ -1,12 +1,14 @@
 plugins {
 	id 'fabric-loom' version '0.8-SNAPSHOT'
+	id 'maven-publish'
 }
 
 sourceCompatibility = JavaVersion.VERSION_16
 targetCompatibility = JavaVersion.VERSION_16
 
-version = "${mod_version}-fabric"
-archivesBaseName = "nbttooltip"
+archivesBaseName = "${project.archives_base_name}"
+version = "${project.mod_version}-fabric"
+group = project.maven_group
 
 minecraft {
 }
@@ -53,9 +55,12 @@ dependencies {
       exclude module: 'roughlyenoughitems-api'
     }
 	
+	modApi "de.klotzi111:KTIG:1+"
 	
 	//Bundling
 	include "me.shedaniel.cloth:cloth-config-fabric:${project.clothconfig_version}"
+	
+	include "de.klotzi111:KTIG:1+"
 }
 
 processResources {
@@ -69,4 +74,22 @@ processResources {
 task sourcesJar(type: Jar, dependsOn: classes) {
 	classifier = 'sources'
 	from sourceSets.main.allSource
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+
+            artifact(remapJar) {
+                builtBy remapJar
+            }
+            artifact(sourcesJar) {
+                builtBy remapSourcesJar
+            }
+        }
+    }
+
+    repositories {
+
+    }
 }
