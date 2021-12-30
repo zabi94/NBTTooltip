@@ -149,7 +149,7 @@ public class NBTTooltip implements ClientModInitializer {
 			} else {
 				list.add(new LiteralText(""));
 			}
-			NbtCompound tag = stack.getTag();
+			NbtCompound tag = stack.getNbt();
 			ArrayList<Text> ttip = new ArrayList<>(lines);
 			if (tag!=null) {
 				if (ModConfig.INSTANCE.showDelimiters) {
@@ -189,7 +189,7 @@ public class NBTTooltip implements ClientModInitializer {
 		StringBuilder sb = new StringBuilder();
 		String name = I18n.translate(stack.getTranslationKey());
 		ArrayList<Text> nbtData = new ArrayList<>();
-		getCopyingEngine().parseTagToList(nbtData, stack.getTag(), false);
+		getCopyingEngine().parseTagToList(nbtData, stack.getNbt(), false);
 		nbtData.forEach(t -> {
 			sb.append(t.asString().replaceAll("§[0-9a-gk-or]", ""));
 			sb.append("\n");
