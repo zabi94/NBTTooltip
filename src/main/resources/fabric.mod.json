@@ -10,7 +10,7 @@
   "contact": {
   },
   "license": "MIT",
-  "icon": "assets/minervahud/icon.png",
+  "icon": "assets/nbttooltip/icon.png",
   "environment": "client",
   "entrypoints": {
     "client": [
