@@ -33,7 +33,7 @@ public class NBTTooltip implements ClientModInitializer {
 
 	public static final String FORMAT = Formatting.ITALIC.toString()+Formatting.DARK_GRAY;
 
-	public static final int WAITTIME_BEFORE_FAST_SCROLL = 20;
+	public static final int WAITTIME_BEFORE_FAST_SCROLL = 10;
 
 	public static KeyBinding COPY_TO_CLIPBOARD = new KeyBinding("key.nbttooltip.copy", InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_RIGHT, "key.category.nbttooltip");
 	public static KeyBinding TOGGLE_NBT = new KeyBinding("key.nbttooltip.toggle", InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_LEFT, "key.category.nbttooltip");

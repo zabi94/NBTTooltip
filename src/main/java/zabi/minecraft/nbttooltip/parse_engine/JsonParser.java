@@ -2,8 +2,6 @@ package zabi.minecraft.nbttooltip.parse_engine;
 
 import java.util.Iterator;
 import java.util.List;
-
-import net.minecraft.nbt.NbtElement;
 import org.jetbrains.annotations.Nullable;
 
 import net.minecraft.nbt.*;
