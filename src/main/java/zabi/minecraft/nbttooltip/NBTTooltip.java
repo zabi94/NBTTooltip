@@ -19,9 +19,7 @@ import net.minecraft.client.toast.SystemToast.Type;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Formatting;
 import zabi.minecraft.nbttooltip.config.ModConfig;
 import zabi.minecraft.nbttooltip.parse_engine.NbtTagParser;
@@ -117,7 +115,7 @@ public class NBTTooltip implements ClientModInitializer {
 	public static ArrayList<Text> transformTtip(ArrayList<Text> ttip, int lines) {
 		ArrayList<Text> newttip = new ArrayList<>(lines);
 		if (ModConfig.INSTANCE.showSeparator) {
-			newttip.add(new LiteralText("- NBTTooltip -"));
+			newttip.add(Text.literal("- NBTTooltip -"));
 		}
 		if (ttip.size()>lines) {
 			if (lines+line_scrolled>ttip.size()) {
@@ -146,26 +144,26 @@ public class NBTTooltip implements ClientModInitializer {
 				lines += list.size();
 				list.clear();
 			} else {
-				list.add(new LiteralText(""));
+				list.add(Text.literal(""));
 			}
 			NbtCompound tag = stack.getNbt();
 			ArrayList<Text> ttip = new ArrayList<>(lines);
 			if (tag!=null) {
 				if (ModConfig.INSTANCE.showDelimiters) {
-					ttip.add(new LiteralText(Formatting.DARK_PURPLE+" - nbt start -"));
+					ttip.add(Text.literal(Formatting.DARK_PURPLE+" - nbt start -"));
 				}
 				if (ModConfig.INSTANCE.compress) {
-					ttip.add(new LiteralText(FORMAT+ tag));
+					ttip.add(Text.literal(FORMAT+ tag));
 				} else {
 					getRenderingEngine().parseTagToList(ttip, tag, ModConfig.INSTANCE.splitLongLines);
 				}
 				if (ModConfig.INSTANCE.showDelimiters) {
-					ttip.add(new LiteralText(Formatting.DARK_PURPLE+" - nbt end -"));
+					ttip.add(Text.literal(Formatting.DARK_PURPLE+" - nbt end -"));
 				}
 				ttip = NBTTooltip.transformTtip(ttip, lines);
 				list.addAll(ttip);
 			} else {
-				list.add(new LiteralText(FORMAT+"No NBT tag"));
+				list.add(Text.literal(FORMAT+"No NBT tag"));
 			}
 		}
 	}
@@ -190,14 +188,14 @@ public class NBTTooltip implements ClientModInitializer {
 		ArrayList<Text> nbtData = new ArrayList<>();
 		getCopyingEngine().parseTagToList(nbtData, stack.getNbt(), false);
 		nbtData.forEach(t -> {
-			sb.append(t.asString().replaceAll("§[0-9a-gk-or]", ""));
+			sb.append(t.getString().replaceAll("§[0-9a-gk-or]", ""));
 			sb.append("\n");
 		});
 		try {
 			mc.keyboard.setClipboard(sb.toString());
-			mc.getToastManager().add(new SystemToast(Type.TUTORIAL_HINT, new TranslatableText("nbttooltip.copied_to_clipboard"), new TranslatableText("nbttooltip.object_details", name)));
+			mc.getToastManager().add(new SystemToast(Type.TUTORIAL_HINT, Text.translatable("nbttooltip.copied_to_clipboard"), Text.translatable("nbttooltip.object_details", name)));
 		} catch (Exception e) {
-			mc.getToastManager().add(new SystemToast(Type.TUTORIAL_HINT, new TranslatableText("nbttooltip.copy_failed"), new LiteralText(e.getMessage())));
+			mc.getToastManager().add(new SystemToast(Type.TUTORIAL_HINT, Text.translatable("nbttooltip.copy_failed"), Text.literal(e.getMessage())));
 			e.printStackTrace();
 		}
 	}

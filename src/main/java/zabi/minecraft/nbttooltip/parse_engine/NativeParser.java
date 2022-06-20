@@ -4,8 +4,14 @@ import java.util.List;
 
 import org.jetbrains.annotations.Nullable;
 
-import net.minecraft.nbt.*;
-import net.minecraft.text.LiteralText;
+import net.minecraft.nbt.AbstractNbtList;
+import net.minecraft.nbt.AbstractNbtNumber;
+import net.minecraft.nbt.NbtByteArray;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtElement;
+import net.minecraft.nbt.NbtIntArray;
+import net.minecraft.nbt.NbtLongArray;
+import net.minecraft.nbt.NbtString;
 import net.minecraft.text.Text;
 
 public class NativeParser implements NbtTagParser {
@@ -13,9 +19,9 @@ public class NativeParser implements NbtTagParser {
 	@Override
 	public void parseTagToList(List<Text> list, @Nullable NbtElement tag, boolean split) {
 		if (tag == null) {
-			list.add(new LiteralText("{}"));
+			list.add(Text.literal("{}"));
 		} else {
-			list.add(new LiteralText(unwrap(tag)));
+			list.add(Text.literal(unwrap(tag)));
 		}
 	}
 

@@ -1,16 +1,15 @@
 package zabi.minecraft.nbttooltip.parse_engine;
 
+import java.util.List;
+
+import org.jetbrains.annotations.Nullable;
+
 import net.minecraft.nbt.AbstractNbtList;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
-import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Formatting;
-import org.jetbrains.annotations.Nullable;
 import zabi.minecraft.nbttooltip.config.ModConfig;
-
-import java.util.List;
 
 public class ColoredHumanReadableParser implements NbtTagParser {
 	
@@ -24,7 +23,7 @@ public class ColoredHumanReadableParser implements NbtTagParser {
 	@Override
 	public void parseTagToList(List<Text> list, @Nullable NbtElement tag, boolean split) {
 		if (tag == null) {
-			list.add(new LiteralText("No NBT tag").formatted(Formatting.DARK_GRAY));
+			list.add(Text.literal("No NBT tag").formatted(Formatting.DARK_GRAY));
 		} else {
 			unwrapTag(list, tag, "", "", ModConfig.INSTANCE.compress?"":"  ", split);
 		}
@@ -36,7 +35,7 @@ public class ColoredHumanReadableParser implements NbtTagParser {
 		} else if (base instanceof AbstractNbtList) {
 			addListToTooltip(tooltip, base, pad, padIncrement, splitLongStrings);
 		} else {
-			addValueToTooltip(tooltip, base, new LiteralText(tagName).formatted(TAGNAME), pad, splitLongStrings);
+			addValueToTooltip(tooltip, base, Text.literal(tagName).formatted(TAGNAME), pad, splitLongStrings);
 		}
 	}
 	
@@ -45,13 +44,13 @@ public class ColoredHumanReadableParser implements NbtTagParser {
 		tag.getKeys().forEach(s -> {
 			boolean nested = (tag.get(s) instanceof AbstractNbtList) || (tag.get(s) instanceof NbtCompound);
 			if (nested) {
-				Text subtreeName = new LiteralText(s).formatted(TAGNAME);
-				Text intro = new TranslatableText("%s%s%s", pad, subtreeName, new LiteralText(": {").formatted(STRUCTURE));
+				Text subtreeName = Text.literal(s).formatted(TAGNAME);
+				Text intro = Text.translatable("%s%s%s", pad, subtreeName, Text.literal(": {").formatted(STRUCTURE));
 				tooltip.add(intro);
 				unwrapTag(tooltip, tag.get(s), pad+padIncrement, s, padIncrement, splitLongStrings);
-				tooltip.add(new LiteralText(pad+"}").formatted(STRUCTURE));
+				tooltip.add(Text.literal(pad+"}").formatted(STRUCTURE));
 			} else {
-				addValueToTooltip(tooltip, tag.get(s), new LiteralText(s).formatted(TAGNAME), pad, splitLongStrings);
+				addValueToTooltip(tooltip, tag.get(s), Text.literal(s).formatted(TAGNAME), pad, splitLongStrings);
 			}
 		});
 	}
@@ -61,11 +60,11 @@ public class ColoredHumanReadableParser implements NbtTagParser {
 		int index = 0;
 		for (NbtElement nbtnext : tag) {
 			if (nbtnext instanceof AbstractNbtList || nbtnext instanceof NbtCompound) {
-				tooltip.add(new TranslatableText("%s [%s]: {", pad, new LiteralText("" + index).formatted(LISTINDEX)).formatted(STRUCTURE));
+				tooltip.add(Text.translatable("%s [%s]: {", pad, Text.literal("" + index).formatted(LISTINDEX)).formatted(STRUCTURE));
 				unwrapTag(tooltip, nbtnext, pad + padIncrement, "", padIncrement, splitLongStrings);
-				tooltip.add(new LiteralText(pad + "}").formatted(STRUCTURE));
+				tooltip.add(Text.literal(pad + "}").formatted(STRUCTURE));
 			} else {
-				addValueToTooltip(tooltip, nbtnext, new TranslatableText("[%s]", new LiteralText("" + index).formatted(LISTINDEX))
+				addValueToTooltip(tooltip, nbtnext, Text.translatable("[%s]", Text.literal("" + index).formatted(LISTINDEX))
 						.formatted(STRUCTURE), pad, splitLongStrings);
 			}
 			index++;
@@ -75,15 +74,15 @@ public class ColoredHumanReadableParser implements NbtTagParser {
 	private static void addValueToTooltip(List<Text> tooltip, NbtElement nbt, Text name, String pad, boolean splitLongStrings) {
 		String toBeAdded = nbt.toString();
 		if (!splitLongStrings || toBeAdded.length() < line_split_threshold) {
-			tooltip.add(new TranslatableText(pad+"%s: %s", name, new LiteralText(nbt.toString()).formatted(STRING)));
+			tooltip.add(Text.translatable(pad+"%s: %s", name, Text.literal(nbt.toString()).formatted(STRING)));
 		} else {
-			Text separator = new LiteralText("|").formatted(Formatting.AQUA);
+			Text separator = Text.literal("|").formatted(Formatting.AQUA);
 			int added = 0;
-			tooltip.add(new TranslatableText(pad+"%s:", name));
+			tooltip.add(Text.translatable(pad+"%s:", name));
 			while (added < toBeAdded.length()) {
 				int nextChunk = Math.min(line_split_threshold, toBeAdded.length() - added);
-				Text chunk = new LiteralText(toBeAdded.substring(added, added+nextChunk)).formatted(STRING);
-				tooltip.add(new TranslatableText("%s"+pad+"   %s", separator, chunk));
+				Text chunk = Text.literal(toBeAdded.substring(added, added+nextChunk)).formatted(STRING);
+				tooltip.add(Text.translatable("%s"+pad+"   %s", separator, chunk));
 				added += nextChunk;
 			}
 		}

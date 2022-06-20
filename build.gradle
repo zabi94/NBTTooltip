@@ -1,5 +1,5 @@
 plugins {
-	id 'fabric-loom' version '0.11-SNAPSHOT'
+	id 'fabric-loom' version '0.12-SNAPSHOT'
 	id 'maven-publish'
 }
 
@@ -50,13 +50,6 @@ dependencies {
       exclude module: 'roughlyenoughitems-api'
     }
     
-	modRuntimeOnly("me.shedaniel:RoughlyEnoughItems-fabric:${project.rei_version}") {
-	  exclude module: 'fabric-api'
-	  exclude module: 'config-2'
-      exclude module: 'cloth-config-fabric'
-      exclude module: 'roughlyenoughitems-api'
-	}
-
 	// //Bundling
 	include "me.shedaniel.cloth:cloth-config-fabric:${project.clothconfig_version}"
 }

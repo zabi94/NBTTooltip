@@ -1,16 +1,16 @@
 package zabi.minecraft.nbttooltip.parse_engine;
 
+import java.util.List;
+
+import org.jetbrains.annotations.Nullable;
+
 import net.minecraft.nbt.AbstractNbtList;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
-import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
-import org.jetbrains.annotations.Nullable;
 import zabi.minecraft.nbttooltip.NBTTooltip;
 import zabi.minecraft.nbttooltip.config.ModConfig;
-
-import java.util.List;
 
 public class BWHumanReadableParser implements NbtTagParser {
 	
@@ -19,7 +19,7 @@ public class BWHumanReadableParser implements NbtTagParser {
 	@Override
 	public void parseTagToList(List<Text> list, @Nullable NbtElement tag, boolean split) {
 		if (tag == null) {
-			list.add(new LiteralText("No NBT tag"));
+			list.add(Text.literal("No NBT tag"));
 		} else {
 			unwrapTag(list, tag, NBTTooltip.FORMAT, "", ModConfig.INSTANCE.compress?"":"  ", split);
 		}
@@ -40,9 +40,9 @@ public class BWHumanReadableParser implements NbtTagParser {
 		tag.getKeys().forEach(s -> {
 			boolean nested = (tag.get(s) instanceof AbstractNbtList) || (tag.get(s) instanceof NbtCompound);
 			if (nested) {
-				tooltip.add(new LiteralText(pad+s+": {"));
+				tooltip.add(Text.literal(pad+s+": {"));
 				unwrapTag(tooltip, tag.get(s), pad+padIncrement, s, padIncrement, splitLongStrings);
-				tooltip.add(new LiteralText(pad+"}"));
+				tooltip.add(Text.literal(pad+"}"));
 			} else {
 				addValueToTooltip(tooltip, tag.get(s), s, pad, splitLongStrings);
 			}
@@ -54,9 +54,9 @@ public class BWHumanReadableParser implements NbtTagParser {
 		int index = 0;
 		for (NbtElement nbtnext : tag) {
 			if (nbtnext instanceof AbstractNbtList || nbtnext instanceof NbtCompound) {
-				tooltip.add(new LiteralText(pad + "[" + index + "]: {"));
+				tooltip.add(Text.literal(pad + "[" + index + "]: {"));
 				unwrapTag(tooltip, nbtnext, pad + padIncrement, "", padIncrement, splitLongStrings);
-				tooltip.add(new LiteralText(pad + "}"));
+				tooltip.add(Text.literal(pad + "}"));
 			} else {
 				addValueToTooltip(tooltip, nbtnext, "[" + index + "]", pad, splitLongStrings);
 			}
@@ -67,10 +67,10 @@ public class BWHumanReadableParser implements NbtTagParser {
 	private static void addValueToTooltip(List<Text> tooltip, NbtElement nbt, String name, String pad, boolean splitLongStrings) {
 		String toBeAdded = nbt.toString();
 		if (!splitLongStrings || toBeAdded.length() < line_split_threshold) {
-			tooltip.add(new LiteralText(pad+name+": "+ nbt));
+			tooltip.add(Text.literal(pad+name+": "+ nbt));
 		} else {
 			int added = 0;
-			tooltip.add(new LiteralText(pad+name+":"));
+			tooltip.add(Text.literal(pad+name+":"));
 			while (added < toBeAdded.length()) {
 				int nextChunk = Math.min(line_split_threshold, toBeAdded.length() - added);
 				String sb = new StringBuilder()
@@ -78,7 +78,7 @@ public class BWHumanReadableParser implements NbtTagParser {
 						.append(Formatting.RESET).append(pad)
 						.append("   ")
 						.append(toBeAdded, added, added + nextChunk).toString();
-				tooltip.add(new LiteralText(sb));
+				tooltip.add(Text.literal(sb));
 				added += nextChunk;
 			}
 		}
