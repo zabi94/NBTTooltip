@@ -1,0 +1,51 @@
+{
+	"nbttooltip.copied_to_clipboard": "复制数据到剪切板",
+	"nbttooltip.object_details": "物品: %s",
+	"nbttooltip.copy_failed": "复制失败",
+	"key.nbttooltip.copy": "复制 NBT",
+	"key.nbttooltip.toggle": "切换 NBT",
+	"key.category.nbttooltip": "NBT 工具提示(NBT Tooltip)",
+	"key.nbttooltip.scroll_down": "向下滚动 NBT",
+	"key.nbttooltip.scroll_up": "向上滚动 NBT",
+	
+	"nbttooltip.config.showseparator": "显示分隔符",
+	"nbttooltip.config.showseparator.line1": "在NBT标签前显示 '-NBTTooltip -'.",
+	"nbttooltip.config.showseparator.line2": "此标签不随文本滚动.",
+	
+	"nbttooltip.config.compress": "水平压缩文本",
+	"nbttooltip.config.compress.line1": "该文本不会有缩进.",
+	"nbttooltip.config.compress.line2": "并且将全部向左对齐.",
+	
+	"nbttooltip.config.triggerType": "触发器类型",
+	"nbttooltip.config.triggerType.line1": "决定何时显示工具提示.",
+	"nbttooltip.config.triggerType.line2": "用于基于键的触发器,键可通过控制菜单进行配置.",
+	
+	"nbttooltip.config.showDelimiters": "显示分隔线",
+	"nbttooltip.config.showDelimiters.line1": "显示 '- NBT start -' 和 '- NBT end -'.",
+	"nbttooltip.config.showDelimiters.line2": "标签内,与其他部分一起滚动.",
+	
+	"nbttooltip.config.ctrlSuppressesRest": "按住CTRL时只显示NBT",
+	"nbttooltip.config.ctrlSuppressesRest.line1": "允许只显示工具提示的NBT部分",
+	"nbttooltip.config.ctrlSuppressesRest.line2": "当按住CTRL时,隐藏其他的内容.",
+	
+	"nbttooltip.config.splitLongLines": "分割长行",
+	"nbttooltip.config.splitLongLines.line1": "将长行分成多行",
+	"nbttooltip.config.splitLongLines.line2": "并在每一部分的开头显示一个小竖线.",
+	
+	"nbttooltip.config.maxLinesShown": "最多NBT行",
+	"nbttooltip.config.maxLinesShown.line1": "在开始滚动之前,",
+	"nbttooltip.config.maxLinesShown.line2": "工具提示中最多显示的行数.",
+	
+	"nbttooltip.config.ticksBeforeScroll": "滚动延迟",
+	"nbttooltip.config.ticksBeforeScroll.line1": "当工具提示过长时,",
+	"nbttooltip.config.ticksBeforeScroll.line2": "显示新行的延迟.",
+	
+	"nbttooltip.config.tooltipEngine": "工具提示呈现方式",
+	"nbttooltip.config.tooltipEngine.line1": "FRIENDLY 使用人类可读的工具提示格式",
+	"nbttooltip.config.tooltipEngine.line2": "JSON 使用标准的JSON文件格式.",
+	
+	"nbttooltip.config.copyingEngine": "复制格式",
+	"nbttooltip.config.copyingEngine.line1": "FRIENDLY 使用人类可读的格式来复制 NBT",
+	"nbttooltip.config.copyingEngine.line2": "JSON 使用标准的JSON文件格式."
+	
+}
