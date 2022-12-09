@@ -59,6 +59,7 @@ gradle-app.setting
 .gradletasknamecache
 
 ### Other ###
+run
 .DS_Store
 *.txt
 
