@@ -1,49 +1,47 @@
 package zabi.minecraft.nbttooltip.parse_engine;
 
 import java.util.List;
-
+import net.minecraft.nbt.ByteArrayTag;
+import net.minecraft.nbt.CollectionTag;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.IntArrayTag;
+import net.minecraft.nbt.LongArrayTag;
+import net.minecraft.nbt.NumericTag;
+import net.minecraft.nbt.StringTag;
+import net.minecraft.nbt.Tag;
+import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.Nullable;
-
-import net.minecraft.nbt.AbstractNbtList;
-import net.minecraft.nbt.AbstractNbtNumber;
-import net.minecraft.nbt.NbtByteArray;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.NbtElement;
-import net.minecraft.nbt.NbtIntArray;
-import net.minecraft.nbt.NbtLongArray;
-import net.minecraft.nbt.NbtString;
-import net.minecraft.text.Text;
 
 public class NativeParser implements NbtTagParser {
 	
 	@Override
-	public void parseTagToList(List<Text> list, @Nullable NbtElement tag, boolean split) {
+	public void parseTagToList(List<Component> list, @Nullable Tag tag, boolean split) {
 		if (tag == null) {
-			list.add(Text.literal("{}"));
+			list.add(Component.literal("{}"));
 		} else {
-			list.add(Text.literal(unwrap(tag)));
+			list.add(Component.literal(unwrap(tag)));
 		}
 	}
 
-	public String unwrap(NbtElement tag) {
-		if (tag instanceof AbstractNbtNumber) {
+	public String unwrap(Tag tag) {
+		if (tag instanceof NumericTag) {
 			return stripTypeIdentifier(tag.toString());
-		} else if (tag instanceof NbtString) {
+		} else if (tag instanceof StringTag) {
 			return tag.toString();
-		} else if (tag instanceof AbstractNbtList) {
-			return String.format("[%s%s]", listIdentifier((AbstractNbtList<?>) tag), unwrapList((AbstractNbtList<?>) tag));
-		} else if (tag instanceof NbtCompound) {
-			return String.format("{%s}", unwrapCompound((NbtCompound) tag));
+		} else if (tag instanceof CollectionTag) {
+			return String.format("[%s%s]", listIdentifier((CollectionTag<?>) tag), unwrapList((CollectionTag<?>) tag));
+		} else if (tag instanceof CompoundTag) {
+			return String.format("{%s}", unwrapCompound((CompoundTag) tag));
 		}
 		return "";
 	}
 
-	private String unwrapCompound(NbtCompound tag) {
-		if (tag.getKeys().size() == 0) {
+	private String unwrapCompound(CompoundTag tag) {
+		if (tag.getAllKeys().size() == 0) {
 			return "";
 		}
 		StringBuilder sb = new StringBuilder();
-		for (String s:tag.getKeys()) {
+		for (String s:tag.getAllKeys()) {
 			sb.append(s);
 			sb.append(":");
 			sb.append(unwrap(tag.get(s)));
@@ -52,7 +50,7 @@ public class NativeParser implements NbtTagParser {
 		return sb.substring(0, sb.toString().length() - 1); //Remove last comma
 	}
 
-	private String unwrapList(AbstractNbtList<?> tag) {
+	private String unwrapList(CollectionTag<?> tag) {
 		if (tag.size() == 0) {
 			return "";
 		}
@@ -65,12 +63,12 @@ public class NativeParser implements NbtTagParser {
 		return sb.toString();
 	}
 	
-	private String listIdentifier(AbstractNbtList<?> tag) {
-		if (tag instanceof NbtByteArray) {
+	private String listIdentifier(CollectionTag<?> tag) {
+		if (tag instanceof ByteArrayTag) {
 			return "B;";
-		} else if (tag instanceof NbtIntArray) {
+		} else if (tag instanceof IntArrayTag) {
 			return "I;";
-		} else if (tag instanceof NbtLongArray) {
+		} else if (tag instanceof LongArrayTag) {
 			return "L;";
 		} else return "";
 	}

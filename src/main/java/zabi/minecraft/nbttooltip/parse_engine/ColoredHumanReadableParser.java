@@ -1,88 +1,86 @@
 package zabi.minecraft.nbttooltip.parse_engine;
 
 import java.util.List;
-
+import net.minecraft.ChatFormatting;
+import net.minecraft.nbt.CollectionTag;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
+import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.Nullable;
-
-import net.minecraft.nbt.AbstractNbtList;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.NbtElement;
-import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
-import zabi.minecraft.nbttooltip.config.ModConfig;
+import zabi.minecraft.nbttooltip.config.ClientConfig;
 
 public class ColoredHumanReadableParser implements NbtTagParser {
 	
 	private static final int line_split_threshold = 30;
 	
-	private static final Formatting LISTINDEX = Formatting.GREEN;
-	private static final Formatting STRING = Formatting.LIGHT_PURPLE;
-	private static final Formatting STRUCTURE = Formatting.GRAY;
-	private static final Formatting TAGNAME = Formatting.GOLD;
+	private static final ChatFormatting LISTINDEX = ChatFormatting.GREEN;
+	private static final ChatFormatting STRING = ChatFormatting.LIGHT_PURPLE;
+	private static final ChatFormatting STRUCTURE = ChatFormatting.GRAY;
+	private static final ChatFormatting TAGNAME = ChatFormatting.GOLD;
 
 	@Override
-	public void parseTagToList(List<Text> list, @Nullable NbtElement tag, boolean split) {
+	public void parseTagToList(List<Component> list, @Nullable Tag tag, boolean split) {
 		if (tag == null) {
-			list.add(Text.literal("No NBT tag").formatted(Formatting.DARK_GRAY));
+			list.add(Component.literal("No NBT tag").withStyle(ChatFormatting.DARK_GRAY));
 		} else {
-			unwrapTag(list, tag, "", "", ModConfig.INSTANCE.compress?"":"  ", split);
+			unwrapTag(list, tag, "", "", ClientConfig.INSTANCE.compress?"":"  ", split);
 		}
 	}
 	
-	private void unwrapTag(List<Text> tooltip, NbtElement base, String pad, String tagName, String padIncrement, boolean splitLongStrings) {
-		if (base instanceof NbtCompound) {
+	private void unwrapTag(List<Component> tooltip, Tag base, String pad, String tagName, String padIncrement, boolean splitLongStrings) {
+		if (base instanceof CompoundTag) {
 			addCompoundToTooltip(tooltip, base, pad, padIncrement, splitLongStrings);
-		} else if (base instanceof AbstractNbtList) {
+		} else if (base instanceof CollectionTag) {
 			addListToTooltip(tooltip, base, pad, padIncrement, splitLongStrings);
 		} else {
-			addValueToTooltip(tooltip, base, Text.literal(tagName).formatted(TAGNAME), pad, splitLongStrings);
+			addValueToTooltip(tooltip, base, Component.literal(tagName).withStyle(TAGNAME), pad, splitLongStrings);
 		}
 	}
 	
-	private void addCompoundToTooltip(List<Text> tooltip, NbtElement base, String pad, String padIncrement, boolean splitLongStrings) {
-		NbtCompound tag = (NbtCompound) base;
-		tag.getKeys().forEach(s -> {
-			boolean nested = (tag.get(s) instanceof AbstractNbtList) || (tag.get(s) instanceof NbtCompound);
+	private void addCompoundToTooltip(List<Component> tooltip, Tag base, String pad, String padIncrement, boolean splitLongStrings) {
+		CompoundTag tag = (CompoundTag) base;
+		tag.getAllKeys().forEach(s -> {
+			boolean nested = (tag.get(s) instanceof CollectionTag) || (tag.get(s) instanceof CompoundTag);
 			if (nested) {
-				Text subtreeName = Text.literal(s).formatted(TAGNAME);
-				Text intro = Text.translatable("%s%s%s", pad, subtreeName, Text.literal(": {").formatted(STRUCTURE));
+				Component subtreeName = Component.literal(s).withStyle(TAGNAME);
+				Component intro = Component.translatable("%s%s%s", pad, subtreeName, Component.literal(": {").withStyle(STRUCTURE));
 				tooltip.add(intro);
 				unwrapTag(tooltip, tag.get(s), pad+padIncrement, s, padIncrement, splitLongStrings);
-				tooltip.add(Text.literal(pad+"}").formatted(STRUCTURE));
+				tooltip.add(Component.literal(pad+"}").withStyle(STRUCTURE));
 			} else {
-				addValueToTooltip(tooltip, tag.get(s), Text.literal(s).formatted(TAGNAME), pad, splitLongStrings);
+				addValueToTooltip(tooltip, tag.get(s), Component.literal(s).withStyle(TAGNAME), pad, splitLongStrings);
 			}
 		});
 	}
 	
-	private void addListToTooltip(List<Text> tooltip, NbtElement base, String pad, String padIncrement, boolean splitLongStrings) {
-		AbstractNbtList<?> tag = (AbstractNbtList<?>) base;
+	private void addListToTooltip(List<Component> tooltip, Tag base, String pad, String padIncrement, boolean splitLongStrings) {
+		CollectionTag<?> tag = (CollectionTag<?>) base;
 		int index = 0;
-		for (NbtElement nbtnext : tag) {
-			if (nbtnext instanceof AbstractNbtList || nbtnext instanceof NbtCompound) {
-				tooltip.add(Text.translatable("%s [%s]: {", pad, Text.literal("" + index).formatted(LISTINDEX)).formatted(STRUCTURE));
+		for (Tag nbtnext : tag) {
+			if (nbtnext instanceof CollectionTag || nbtnext instanceof CompoundTag) {
+				tooltip.add(Component.translatable("%s [%s]: {", pad, Component.literal("" + index).withStyle(LISTINDEX)).withStyle(STRUCTURE));
 				unwrapTag(tooltip, nbtnext, pad + padIncrement, "", padIncrement, splitLongStrings);
-				tooltip.add(Text.literal(pad + "}").formatted(STRUCTURE));
+				tooltip.add(Component.literal(pad + "}").withStyle(STRUCTURE));
 			} else {
-				addValueToTooltip(tooltip, nbtnext, Text.translatable("[%s]", Text.literal("" + index).formatted(LISTINDEX))
-						.formatted(STRUCTURE), pad, splitLongStrings);
+				addValueToTooltip(tooltip, nbtnext, Component.translatable("[%s]", Component.literal("" + index).withStyle(LISTINDEX))
+						.withStyle(STRUCTURE), pad, splitLongStrings);
 			}
 			index++;
 		}
 	}
 	
-	private static void addValueToTooltip(List<Text> tooltip, NbtElement nbt, Text name, String pad, boolean splitLongStrings) {
+	private static void addValueToTooltip(List<Component> tooltip, Tag nbt, Component name, String pad, boolean splitLongStrings) {
 		String toBeAdded = nbt.toString();
 		if (!splitLongStrings || toBeAdded.length() < line_split_threshold) {
-			tooltip.add(Text.translatable(pad+"%s: %s", name, Text.literal(nbt.toString()).formatted(STRING)));
+			tooltip.add(Component.translatable(pad+"%s: %s", name, Component.literal(nbt.toString()).withStyle(STRING)));
 		} else {
-			Text separator = Text.literal("|").formatted(Formatting.AQUA);
+			Component separator = Component.literal("|").withStyle(ChatFormatting.AQUA);
 			int added = 0;
-			tooltip.add(Text.translatable(pad+"%s:", name));
+			tooltip.add(Component.translatable(pad+"%s:", name));
 			while (added < toBeAdded.length()) {
 				int nextChunk = Math.min(line_split_threshold, toBeAdded.length() - added);
-				Text chunk = Text.literal(toBeAdded.substring(added, added+nextChunk)).formatted(STRING);
-				tooltip.add(Text.translatable("%s"+pad+"   %s", separator, chunk));
+				Component chunk = Component.literal(toBeAdded.substring(added, added+nextChunk)).withStyle(STRING);
+				tooltip.add(Component.translatable("%s"+pad+"   %s", separator, chunk));
 				added += nextChunk;
 			}
 		}
