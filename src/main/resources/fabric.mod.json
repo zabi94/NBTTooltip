@@ -8,6 +8,9 @@
     "Zabi94"
   ],
   "contact": {
+    "homepage": "https://modrinth.com/mod/nbttooltip",
+    "sources": "https://github.com/zabi94/NBTTooltip",
+    "issues": "https://github.com/zabi94/NBTTooltip/issues"
   },
   "license": "MIT",
   "icon": "assets/nbttooltip/icon.png",
@@ -21,9 +24,12 @@
     ]
   },
   "depends": {
-    "fabricloader": "*",
-    "fabric": "*",
-    "minecraft": ">=1.19.3",
-    "java": ">=17"
+  "fabricloader": ">=${fabricloaderversion}",
+  "minecraft": "~${mcversion}",
+  "fabric-api": ">=${fabricapiversion}",
+  "cloth-config2": ">=${clothconfigversion}"
+  },
+  "recommends": {
+    "modmenu": ">=${modmenuversion}"
   }
 }

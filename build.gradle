@@ -1,72 +1,64 @@
 plugins {
-	id 'fabric-loom' version '0.12-SNAPSHOT'
+	id 'fabric-loom' version '1.3-SNAPSHOT'
 	id 'maven-publish'
 }
 
-sourceCompatibility = JavaVersion.VERSION_17
-targetCompatibility = JavaVersion.VERSION_17
-
-archivesBaseName = project.archives_base_name
-version = project.mod_version
+version = "${project.mod_version}+${project.minecraft_version}"
 group = project.maven_group
 
+base {
+	archivesName = project.archives_base_name
+}
+
 repositories {
-    mavenLocal()
-    maven {
-        name = "CurseForge"
-        url = "https://minecraft.curseforge.com/api/maven/"
-    }
-    maven {
-    	name = "ModMenu"
-    	url = "https://maven.terraformersmc.com/releases/"
-    }
-    maven {
-    	name = "Cloth+REI"
-    	url = "https://maven.shedaniel.me/"
-    }
-}
-
-dependencies {
-	minecraft "com.mojang:minecraft:${project.minecraft_version}"
-	mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
-	
-	//Fabric
-	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
-	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
-	
-
-	// Deps
-	modApi("com.terraformersmc:modmenu:${project.modmenu_version}")  {
-      exclude module: 'fabric-api'
-      exclude module: 'config-2'
-      exclude module: 'cloth-config-fabric'
-      exclude module: 'roughlyenoughitems-api'
-    }
-    
-	modApi("me.shedaniel.cloth:cloth-config-fabric:${project.clothconfig_version}") {
-      exclude module: 'fabric-api'
-      exclude module: 'config-2'
-      exclude module: 'cloth-config-fabric'
-      exclude module: 'roughlyenoughitems-api'
-    }
-    
-	// //Bundling
-	include "me.shedaniel.cloth:cloth-config-fabric:${project.clothconfig_version}"
-}
-
-processResources {
-	inputs.property "version", project.version
-
-	filesMatching("fabric.mod.json") {
-		expand "version": project.version
+	// Loom adds the essential maven repositories to download Minecraft and libraries from automatically.
+	// See https://docs.gradle.org/current/userguide/declaring_repositories.html
+	// for more information about repositories.
+	maven { url "https://maven.shedaniel.me/"}
+	maven {
+		name = "TerraformersMC"
+		url = "https://maven.terraformersmc.com/releases"
 	}
 }
 
-tasks.withType(JavaCompile) {
-	options.encoding = "UTF-8"
-	it.options.release = 17
+dependencies {
+	// To change the versions see the gradle.properties file
+	minecraft "com.mojang:minecraft:${project.minecraft_version}"
+	mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
+	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
+
+	// Fabric API
+	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+
+	// Cloth config
+	modImplementation "me.shedaniel.cloth:cloth-config-fabric:${project.clothconfig_version}"
+
+	// Mod Menu
+	modImplementation "com.terraformersmc:modmenu:${project.modmenu_version}"
 }
 
+processResources {
+	inputs.properties([
+			"version": project.version,
+			"mcversion": project.minecraft_version,
+			"fabricloaderversion": project.loader_version,
+			"fabricapiversion": project.fabric_version,
+			"modmenuversion": project.modmenu_version,
+			"clothconfigversion": project.clothconfig_version
+	])
+	filesMatching("fabric.mod.json") {
+		expand "version": project.version,
+				"mcversion": project.minecraft_version,
+				"fabricloaderversion": project.loader_version,
+				"fabricapiversion": project.fabric_version,
+				"modmenuversion": project.modmenu_version,
+				"clothconfigversion": project.clothconfig_version
+	}
+}
+
+tasks.withType(JavaCompile).configureEach {
+	it.options.release = 17
+}
 
 java {
 	withSourcesJar()
@@ -74,22 +66,17 @@ java {
 
 jar {
 	from("LICENSE") {
-		rename { "${it}_${project.archivesBaseName}"}
+		rename {"${it}_${base.archivesName.get()}"}
 	}
 }
 
 publishing {
 	publications {
 		mavenJava(MavenPublication) {
-			artifact(remapJar) {
-				builtBy remapJar
-			}
-			artifact(sourcesJar) {
-				builtBy remapSourcesJar
-			}
+			from components.java
 		}
 	}
-
+	// See https://docs.gradle.org/current/userguide/publishing_maven.html for information on how to set up publishing.
 	repositories {
 	}
 }
