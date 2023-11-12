@@ -148,7 +148,7 @@ public class NBTTooltip implements ClientModInitializer {
 			}
 			NbtCompound tag = stack.getNbt();
 			ArrayList<Text> ttip = new ArrayList<>(lines);
-			if (tag!=null) {
+			if (tag!=null && !tag.isEmpty()) {
 				if (ModConfig.INSTANCE.showDelimiters) {
 					ttip.add(Text.literal(Formatting.DARK_PURPLE+" - nbt start -"));
 				}
@@ -163,7 +163,7 @@ public class NBTTooltip implements ClientModInitializer {
 				ttip = NBTTooltip.transformTtip(ttip, lines);
 				list.addAll(ttip);
 			} else {
-				list.add(Text.literal(FORMAT+"No NBT tag"));
+				list.add(Text.literal(FORMAT+"No NBT data"));
 			}
 		}
 	}
