@@ -1,0 +1,51 @@
+{
+	"nbttooltip.copied_to_clipboard": "Dati copiati",
+	"nbttooltip.object_details": "Oggetto: %s",
+	"nbttooltip.copy_failed": "Copia fallita",
+	"key.nbttooltip.copy": "Copia NBT",
+	"key.nbttooltip.toggle": "(Dis)Attiva NBT",
+	"key.category.nbttooltip": "NBT Tooltip",
+	"key.nbttooltip.scroll_down": "Scorri giù NBT",
+	"key.nbttooltip.scroll_up": "Scorri su NBT",
+	
+	"nbttooltip.config.showseparator": "Mostra separatore",
+	"nbttooltip.config.showseparator.line1": "Stampa '- NBTTooltip -' prima del tag NBT.",
+	"nbttooltip.config.showseparator.line2": "Questa linea non scorre con il resto del testo.",
+	
+	"nbttooltip.config.compress": "Comprimi testo orizzontalmente",
+	"nbttooltip.config.compress.line1": "Il testo non sarà indentato e verrà",
+	"nbttooltip.config.compress.line2": "allineato invece al margine sinistro.",
+	
+	"nbttooltip.config.triggerType": "Attivazione",
+	"nbttooltip.config.triggerType.line1": "Determina quando il tooltip deve essere mostrato. Il tasto da usare",
+	"nbttooltip.config.triggerType.line2": "per le attivazioni è configurabile nel menu di associazione tasti.",
+	
+	"nbttooltip.config.showDelimiters": "Mostra delimitatori",
+	"nbttooltip.config.showDelimiters.line1": "Stampa '- NBT start -' e '- NBT end -'.",
+	"nbttooltip.config.showDelimiters.line2": "dentro il tag, che scorrono con il testo.",
+	
+	"nbttooltip.config.ctrlSuppressesRest": "Isola NBT con CTRL",
+	"nbttooltip.config.ctrlSuppressesRest.line1": "Ti permette di nascondere il resto del tooltip",
+	"nbttooltip.config.ctrlSuppressesRest.line2": "quando si tiene premuto il tasto CTRL.",
+	
+	"nbttooltip.config.splitLongLines": "Dividi linee lunghe",
+	"nbttooltip.config.splitLongLines.line1": "Divide le linee di testo troppo lunghe in linee",
+	"nbttooltip.config.splitLongLines.line2": "multiple e piazza un segno per riconoscerle.",
+	
+	"nbttooltip.config.maxLinesShown": "Numero righe massimo",
+	"nbttooltip.config.maxLinesShown.line1": "Il numero massimo di righe da stampare in un tooltip",
+	"nbttooltip.config.maxLinesShown.line2": "prima che il testo cominci a scorrere.",
+	
+	"nbttooltip.config.ticksBeforeScroll": "Lentezza scorrimento",
+	"nbttooltip.config.ticksBeforeScroll.line1": "Il numero di tick del gioco dopo i quali il tooltip",
+	"nbttooltip.config.ticksBeforeScroll.line2": "scorre di una riga quando non rientra nei limiti.",
+	
+	"nbttooltip.config.tooltipEngine": "Formato per presentazione",
+	"nbttooltip.config.tooltipEngine.line1": "FRIENDLY mostra i tooltip in un formato comprensibile da umani.",
+	"nbttooltip.config.tooltipEngine.line2": "JSON usa il formato standard JSON per file.",
+	
+	"nbttooltip.config.copyingEngine": "Formato per copia",
+	"nbttooltip.config.copyingEngine.line1": "FRIENDLY copia i tooltip in un formato comprensibile da umani.",
+	"nbttooltip.config.copyingEngine.line2": "JSON usa il formato standard JSON per file."
+	
+}
