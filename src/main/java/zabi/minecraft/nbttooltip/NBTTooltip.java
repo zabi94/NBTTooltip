@@ -193,9 +193,9 @@ public class NBTTooltip implements ClientModInitializer {
 		});
 		try {
 			mc.keyboard.setClipboard(sb.toString());
-			mc.getToastManager().add(new SystemToast(Type.TUTORIAL_HINT, Text.translatable("nbttooltip.copied_to_clipboard"), Text.translatable("nbttooltip.object_details", name)));
+			mc.getToastManager().add(new SystemToast(Type.PERIODIC_NOTIFICATION, Text.translatable("nbttooltip.copied_to_clipboard"), Text.translatable("nbttooltip.object_details", name)));
 		} catch (Exception e) {
-			mc.getToastManager().add(new SystemToast(Type.TUTORIAL_HINT, Text.translatable("nbttooltip.copy_failed"), Text.literal(e.getMessage())));
+			mc.getToastManager().add(new SystemToast(Type.PERIODIC_NOTIFICATION, Text.translatable("nbttooltip.copy_failed"), Text.literal(e.getMessage())));
 			e.printStackTrace();
 		}
 	}
