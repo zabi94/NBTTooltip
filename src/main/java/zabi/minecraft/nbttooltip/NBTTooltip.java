@@ -60,6 +60,8 @@ public class NBTTooltip implements ClientModInitializer {
 
 	public static void clientTick(MinecraftClient mc) {
 		
+		if (mc.world == null) return;
+		
 		if (autoscroll_locks > 0) autoscroll_locks--;
 		
 		if (!Screen.hasShiftDown() && !isPressed(mc, SCROLL_DOWN) && !isPressed(mc, SCROLL_UP) && autoscroll_locks == 0) {
