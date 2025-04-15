@@ -1,6 +1,7 @@
 package zabi.minecraft.nbttooltip.parse_engine;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.jetbrains.annotations.Nullable;
 
@@ -31,7 +32,7 @@ public class NativeParser implements NbtTagParser {
 		} else if (tag instanceof NbtString) {
 			return tag.toString();
 		} else if (tag instanceof AbstractNbtList) {
-			return String.format("[%s%s]", listIdentifier((AbstractNbtList<?>) tag), unwrapList((AbstractNbtList<?>) tag));
+			return String.format("[%s%s]", listIdentifier((AbstractNbtList) tag), unwrapList((AbstractNbtList) tag));
 		} else if (tag instanceof NbtCompound) {
 			return String.format("{%s}", unwrapCompound((NbtCompound) tag));
 		}
@@ -39,7 +40,7 @@ public class NativeParser implements NbtTagParser {
 	}
 
 	private String unwrapCompound(NbtCompound tag) {
-		if (tag.getKeys().size() == 0) {
+		if (tag.getKeys().isEmpty()) {
 			return "";
 		}
 		StringBuilder sb = new StringBuilder();
@@ -52,27 +53,21 @@ public class NativeParser implements NbtTagParser {
 		return sb.substring(0, sb.toString().length() - 1); //Remove last comma
 	}
 
-	private String unwrapList(AbstractNbtList<?> tag) {
-		if (tag.size() == 0) {
+	private String unwrapList(AbstractNbtList tag) {
+		if (tag.isEmpty()) {
 			return "";
 		}
-		StringBuilder sb = new StringBuilder();
-		for (int i = 0; i < tag.size() - 1; i++) {
-			sb.append(unwrap(tag.get(i)));
-			sb.append(',');
-		}
-		sb.append(unwrap(tag.get(tag.size() - 1)));
-		return sb.toString();
+
+		return tag.stream().map(this::unwrap).collect(Collectors.joining(","));
 	}
-	
-	private String listIdentifier(AbstractNbtList<?> tag) {
-		if (tag instanceof NbtByteArray) {
-			return "B;";
-		} else if (tag instanceof NbtIntArray) {
-			return "I;";
-		} else if (tag instanceof NbtLongArray) {
-			return "L;";
-		} else return "";
+
+	private String listIdentifier(AbstractNbtList tag) {
+		return switch (tag) {
+			case NbtByteArray ignored -> "B;";
+			case NbtIntArray ignored -> "I;";
+			case NbtLongArray ignored -> "L;";
+			case null, default -> "";
+		};
 	}
 
 	private String stripTypeIdentifier(String string) {
@@ -80,6 +75,4 @@ public class NativeParser implements NbtTagParser {
 		if (last >= '0' && last <= '9') return string;
 		return string.substring(0, string.length() - 1);
 	}
-
-
 }

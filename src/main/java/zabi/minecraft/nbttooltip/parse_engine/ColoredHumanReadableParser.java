@@ -56,7 +56,7 @@ public class ColoredHumanReadableParser implements NbtTagParser {
 	}
 	
 	private void addListToTooltip(List<Text> tooltip, NbtElement base, String pad, String padIncrement, boolean splitLongStrings) {
-		AbstractNbtList<?> tag = (AbstractNbtList<?>) base;
+		AbstractNbtList tag = (AbstractNbtList) base;
 		int index = 0;
 		for (NbtElement nbtnext : tag) {
 			if (nbtnext instanceof AbstractNbtList || nbtnext instanceof NbtCompound) {
