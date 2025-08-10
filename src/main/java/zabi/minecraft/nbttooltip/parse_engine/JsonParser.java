@@ -20,18 +20,18 @@ public class JsonParser implements NbtTagParser {
 			list.add(Text.literal("{}"));
 		} else {
 			list.add(Text.literal("{"));
-			unwrapTag(list, tag, ModConfig.INSTANCE.compress?"":"  ", "", ModConfig.INSTANCE.compress?"":"  ");
+			unwrapTag(list, tag, ModConfig.INSTANCE.compress?"":"  ", ModConfig.INSTANCE.compress?"":"  ");
 			list.add(Text.literal("}"));
 		}
 	}
 	
-	private void unwrapTag(List<Text> tooltip, NbtElement base, String pad, String tagName, String padIncrement) {
+	private void unwrapTag(List<Text> tooltip, NbtElement base, String pad, String padIncrement) {
 		if (base instanceof NbtCompound) {
 			addCompoundToTooltip(tooltip, base, pad, padIncrement);
 		} else if (base instanceof AbstractNbtList) {
 			addListToTooltip(tooltip, base, pad, padIncrement);
 		} else {
-			addValueToTooltip(tooltip, base, tagName, pad, false);
+			addValueToTooltip(tooltip, base, pad, false);
 		}
 	}
 	
@@ -42,11 +42,11 @@ public class JsonParser implements NbtTagParser {
 			String s = iter.next();
 			if (tag.get(s) instanceof NbtCompound) {
 				tooltip.add(Text.literal(pad+'"'+s+"\": {"));
-				unwrapTag(tooltip, tag.get(s), pad+padIncrement, s, padIncrement);
+				unwrapTag(tooltip, tag.get(s), pad+padIncrement, padIncrement);
 				tooltip.add(Text.literal(pad+"}"+(iter.hasNext()?",":"")));
 			} else if (tag.get(s) instanceof AbstractNbtList) {
 				tooltip.add(Text.literal(pad+'"'+s+"\": ["));
-				unwrapTag(tooltip, tag.get(s), pad+padIncrement, s, padIncrement);
+				unwrapTag(tooltip, tag.get(s), pad+padIncrement, padIncrement);
 				tooltip.add(Text.literal(pad+"]"+(iter.hasNext()?",":"")));
 			} else {
 				addNamedValueToTooltip(tooltip, tag.get(s), s, pad, iter.hasNext());
@@ -55,20 +55,20 @@ public class JsonParser implements NbtTagParser {
 	}
 	
 	private void addListToTooltip(List<Text> tooltip, NbtElement base, String pad, String padIncrement) {
-		AbstractNbtList<?> tag = (AbstractNbtList<?>) base;
+		AbstractNbtList tag = (AbstractNbtList) base;
 		Iterator<? extends NbtElement> iter = tag.iterator();
 		while (iter.hasNext()) {
 			NbtElement nbtnext = iter.next();
 			if (nbtnext instanceof NbtCompound) {
 				tooltip.add(Text.literal(pad + "{"));
-				unwrapTag(tooltip, nbtnext, pad+padIncrement, "", padIncrement);
+				unwrapTag(tooltip, nbtnext, pad+padIncrement, padIncrement);
 				tooltip.add(Text.literal(pad+"}"+(iter.hasNext()?",":"")));
 			} else if (nbtnext instanceof AbstractNbtList) {
 				tooltip.add(Text.literal(pad + "["));
-				unwrapTag(tooltip, nbtnext, pad+padIncrement, "", padIncrement);
+				unwrapTag(tooltip, nbtnext, pad+padIncrement, padIncrement);
 				tooltip.add(Text.literal(pad+"]"+(iter.hasNext()?",":"")));
 			} else {
-				addValueToTooltip(tooltip, nbtnext, "", pad, iter.hasNext());
+				addValueToTooltip(tooltip, nbtnext, pad, iter.hasNext());
 			}
 		}
 	}
@@ -78,7 +78,7 @@ public class JsonParser implements NbtTagParser {
 		tooltip.add(Text.literal(pad+'"'+name+"\": "+cleanString+(addComma ? "," : "")));
 	}
 	
-	private static void addValueToTooltip(List<Text> tooltip, NbtElement nbt, String name, String pad, boolean addComma) {
+	private static void addValueToTooltip(List<Text> tooltip, NbtElement nbt, String pad, boolean addComma) {
 		String cleanString = nbt instanceof NbtString ? escapeChars(nbt.toString()) : stripTypeIdentifiers(nbt.toString());
 		tooltip.add(Text.literal(pad+cleanString+(addComma ? "," : "")));
 	}

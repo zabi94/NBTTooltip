@@ -38,19 +38,22 @@ public class BWHumanReadableParser implements NbtTagParser {
 	private void addCompoundToTooltip(List<Text> tooltip, NbtElement base, String pad, String padIncrement, boolean splitLongStrings) {
 		NbtCompound tag = (NbtCompound) base;
 		tag.getKeys().forEach(s -> {
-			boolean nested = (tag.get(s) instanceof AbstractNbtList) || (tag.get(s) instanceof NbtCompound);
-			if (nested) {
-				tooltip.add(Text.literal(pad+s+": {"));
-				unwrapTag(tooltip, tag.get(s), pad+padIncrement, s, padIncrement, splitLongStrings);
-				tooltip.add(Text.literal(pad+"}"));
-			} else {
-				addValueToTooltip(tooltip, tag.get(s), s, pad, splitLongStrings);
+			NbtElement element = tag.get(s);
+			if (element != null) {
+				boolean nested = (element instanceof AbstractNbtList) || (element instanceof NbtCompound);
+				if (nested) {
+					tooltip.add(Text.literal(pad+s+": {"));
+					unwrapTag(tooltip, element, pad+padIncrement, s, padIncrement, splitLongStrings);
+					tooltip.add(Text.literal(pad+"}"));
+				} else {
+					addValueToTooltip(tooltip, element, s, pad, splitLongStrings);
+				}
 			}
 		});
 	}
 	
 	private void addListToTooltip(List<Text> tooltip, NbtElement base, String pad, String padIncrement, boolean splitLongStrings) {
-		AbstractNbtList<?> tag = (AbstractNbtList<?>) base;
+		AbstractNbtList tag = (AbstractNbtList) base;
 		int index = 0;
 		for (NbtElement nbtnext : tag) {
 			if (nbtnext instanceof AbstractNbtList || nbtnext instanceof NbtCompound) {
@@ -73,11 +76,10 @@ public class BWHumanReadableParser implements NbtTagParser {
 			tooltip.add(Text.literal(pad+name+":"));
 			while (added < toBeAdded.length()) {
 				int nextChunk = Math.min(line_split_threshold, toBeAdded.length() - added);
-				String sb = new StringBuilder()
-						.append(Formatting.AQUA).append("|")
-						.append(Formatting.RESET).append(pad)
-						.append("   ")
-						.append(toBeAdded, added, added + nextChunk).toString();
+				String sb = Formatting.AQUA + "|" +
+						Formatting.RESET + pad +
+						"   " +
+						toBeAdded.substring(added, added + nextChunk);
 				tooltip.add(Text.literal(sb));
 				added += nextChunk;
 			}
