@@ -31,7 +31,13 @@
 	"nbttooltip.config.splitLongLines": "分割长行",
 	"nbttooltip.config.splitLongLines.line1": "将长行分成多行",
 	"nbttooltip.config.splitLongLines.line2": "并在每一部分的开头显示一个小竖线.",
-	
+
+	"nbttooltip.config.hideLore": "隐藏描述行",
+	"nbttooltip.config.hideLore.line": "从物品描述中隐藏组件。",
+
+    "nbttooltip.config.hideDisplayName": "从NBT隐藏显示名称",
+    "nbttooltip.config.hideDisplayName.line": "从物品NBT中隐藏显示名称组件。",
+
 	"nbttooltip.config.maxLinesShown": "最多NBT行",
 	"nbttooltip.config.maxLinesShown.line1": "在开始滚动之前,",
 	"nbttooltip.config.maxLinesShown.line2": "工具提示中最多显示的行数.",

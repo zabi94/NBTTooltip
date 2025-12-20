@@ -31,7 +31,13 @@
 	"nbttooltip.config.splitLongLines": "Разделение длинных строк",
 	"nbttooltip.config.splitLongLines.line1": "Разделяет длинные строки на несколько,",
 	"nbttooltip.config.splitLongLines.line2": "размещая пометку перед началом каждой.",
-	
+
+	"nbttooltip.config.hideLore": "Скрыть строки описания",
+	"nbttooltip.config.hideLore.line": "Скрыть компоненты из описания предмета.",
+
+    "nbttooltip.config.hideDisplayName": "Скрыть отображаемое имя из NBT",
+    "nbttooltip.config.hideDisplayName.line": "Скрыть компонент отображаемого имени из NBT предмета.",
+
 	"nbttooltip.config.maxLinesShown": "Максимум строк nbt",
 	"nbttooltip.config.maxLinesShown.line1": "Предельное число строк, отображаемых в подсказке,",
 	"nbttooltip.config.maxLinesShown.line2": "при которых данные не прокручиваются.",

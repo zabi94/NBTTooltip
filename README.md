@@ -2,4 +2,5 @@
 
 A Minecraft mod to show the Item NBT tag on their tooltip.
 
-This code is **very** messy. Don't look into this while learning! I will refactor to something more decent when I get some time, promised.
+This is a fork of this repo: https://github.com/zabi94/NBTTooltip
+I just wanted to update a few things (and versions) since I use this often. Feel free to PR any ideas you have for the mod!

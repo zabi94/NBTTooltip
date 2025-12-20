@@ -7,6 +7,10 @@
   "authors": [
     "Zabi94"
   ],
+  "contributors": [
+    "tricrotism",
+    "joseplay1012"
+  ],
   "contact": {
   },
   "license": "MIT",
@@ -23,7 +27,7 @@
   "depends": {
     "fabricloader": "*",
     "fabric": "*",
-    "minecraft": ">=1.21.2",
+    "minecraft": ">=1.21.10",
     "java": ">=21"
   }
 }

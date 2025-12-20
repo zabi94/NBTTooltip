@@ -7,45 +7,51 @@
 	"key.category.nbttooltip": "NBT Tooltip",
 	"key.nbttooltip.scroll_down": "Scroll NBT down",
 	"key.nbttooltip.scroll_up": "Scroll NBT up",
-	
+
 	"nbttooltip.config.showseparator": "Show separator",
 	"nbttooltip.config.showseparator.line1": "Prints '- NBTTooltip -' before the NBT tag.",
 	"nbttooltip.config.showseparator.line2": "This tag doesn't scroll with the text.",
-	
+
 	"nbttooltip.config.compress": "Compress text horizontally",
 	"nbttooltip.config.compress.line1": "The text won't have indentation and will",
 	"nbttooltip.config.compress.line2": "all align to the left margin.",
-	
+
 	"nbttooltip.config.triggerType": "Trigger Type",
 	"nbttooltip.config.triggerType.line1": "Determines when the tooltip should be shown. The key used for",
 	"nbttooltip.config.triggerType.line2": "key-based triggers is configurable through the controls menu.",
-	
+
 	"nbttooltip.config.showDelimiters": "Show delimiters",
 	"nbttooltip.config.showDelimiters.line1": "Prints '- NBT start -' and '- NBT end -'.",
 	"nbttooltip.config.showDelimiters.line2": "inside the tag, scrolling with the rest.",
-	
+
 	"nbttooltip.config.ctrlSuppressesRest": "Just NBT with CTRL",
 	"nbttooltip.config.ctrlSuppressesRest.line1": "Allows to show just the NBT part of a tooltip",
 	"nbttooltip.config.ctrlSuppressesRest.line2": "when holding CTRL down, hiding the rest.",
-	
+
 	"nbttooltip.config.splitLongLines": "Split long lines",
 	"nbttooltip.config.splitLongLines.line1": "Divides long lines into multiple ones and",
 	"nbttooltip.config.splitLongLines.line2": "places a sign at the beginning of each part.",
-	
+
+    "nbttooltip.config.hideLore": "Hide lore lines",
+    "nbttooltip.config.hideLore.line": "Hide the components from the item lore.",
+
+    "nbttooltip.config.hideDisplayName": "Hide display name from NBT",
+    "nbttooltip.config.hideDisplayName.line": "Hide the display name component from the item nbt.",
+
 	"nbttooltip.config.maxLinesShown": "Maximum NBT lines",
 	"nbttooltip.config.maxLinesShown.line1": "The maximum amount of lines shown in a",
 	"nbttooltip.config.maxLinesShown.line2": "tooltip before it starts scrolling.",
-	
+
 	"nbttooltip.config.ticksBeforeScroll": "Scroll delay",
 	"nbttooltip.config.ticksBeforeScroll.line1": "The amount of ticks after which a new line",
 	"nbttooltip.config.ticksBeforeScroll.line2": "is shown when the tooltip is too long.",
-	
+
 	"nbttooltip.config.tooltipEngine": "Tooltip presentation",
 	"nbttooltip.config.tooltipEngine.line1": "FRIENDLY uses a human-readable format for tooltips.",
 	"nbttooltip.config.tooltipEngine.line2": "JSON uses the standard JSON format for files.",
-	
+
 	"nbttooltip.config.copyingEngine": "Copy format",
 	"nbttooltip.config.copyingEngine.line1": "FRIENDLY uses a human-readable format to copy nbt.",
 	"nbttooltip.config.copyingEngine.line2": "JSON uses the standard JSON format for files."
-	
+
 }

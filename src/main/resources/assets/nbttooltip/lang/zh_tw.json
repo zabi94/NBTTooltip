@@ -7,45 +7,51 @@
 	"key.category.nbttooltip": "NBT 工具提示",
 	"key.nbttooltip.scroll_down": "向下捲動 NBT",
 	"key.nbttooltip.scroll_up": "向上捲動 NBT",
-	
+
 	"nbttooltip.config.showseparator": "顯示分隔線",
 	"nbttooltip.config.showseparator.line1": "在 NBT 標籤前列印「- NBTTooltip -」。",
 	"nbttooltip.config.showseparator.line2": "此標籤不會隨文字捲動。",
-	
+
 	"nbttooltip.config.compress": "水平壓縮文字",
 	"nbttooltip.config.compress.line1": "文字將沒有縮排，並且",
 	"nbttooltip.config.compress.line2": "全部對齊到左邊界。",
-	
+
 	"nbttooltip.config.triggerType": "觸發類型",
 	"nbttooltip.config.triggerType.line1": "決定何時顯示工具提示。用於",
 	"nbttooltip.config.triggerType.line2": "基於按鍵的觸發器的按鍵可透過控制選單設定。",
-	
+
 	"nbttooltip.config.showDelimiters": "顯示分隔符",
 	"nbttooltip.config.showDelimiters.line1": "列印「- NBT start -」和「- NBT end -」。",
 	"nbttooltip.config.showDelimiters.line2": "在標籤內，隨其他部分一起捲動。",
-	
+
 	"nbttooltip.config.ctrlSuppressesRest": "按住 CTRL 僅顯示 NBT",
 	"nbttooltip.config.ctrlSuppressesRest.line1": "允許僅在",
 	"nbttooltip.config.ctrlSuppressesRest.line2": "按住 CTRL 時顯示工具提示的 NBT 部分，隱藏其餘部分。",
-	
+
 	"nbttooltip.config.splitLongLines": "分割長行",
 	"nbttooltip.config.splitLongLines.line1": "將長行分成多行，並",
 	"nbttooltip.config.splitLongLines.line2": "在每個部分的開頭放置一個標誌。",
-	
+
+	"nbttooltip.config.hideLore": "隱藏說明欄位",
+	"nbttooltip.config.hideLore.line": "從物品說明中隱藏元件。",
+
+    "nbttooltip.config.hideDisplayName": "從NBT隱藏顯示名稱",
+    "nbttooltip.config.hideDisplayName.line": "從物品NBT中隱藏顯示名稱組件。",
+
 	"nbttooltip.config.maxLinesShown": "最大 NBT 行數",
 	"nbttooltip.config.maxLinesShown.line1": "工具提示中顯示的最大行數，超過此行數後",
 	"nbttooltip.config.maxLinesShown.line2": "將開始捲動。",
-	
+
 	"nbttooltip.config.ticksBeforeScroll": "捲動延遲",
 	"nbttooltip.config.ticksBeforeScroll.line1": "顯示新行之前的刻數，當工具提示",
 	"nbttooltip.config.ticksBeforeScroll.line2": "過長時。",
-	
+
 	"nbttooltip.config.tooltipEngine": "工具提示呈現方式",
 	"nbttooltip.config.tooltipEngine.line1": "FRIENDLY 對工具提示使用人類可讀的格式。",
 	"nbttooltip.config.tooltipEngine.line2": "JSON 對檔案使用標準的 JSON 格式。",
-	
+
 	"nbttooltip.config.copyingEngine": "複製格式",
 	"nbttooltip.config.copyingEngine.line1": "FRIENDLY 使用人類可讀的格式來複製 nbt。",
 	"nbttooltip.config.copyingEngine.line2": "JSON 對檔案使用標準的 JSON 格式。"
-	
+
 }
