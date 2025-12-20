@@ -55,7 +55,7 @@ public class JsonParser implements NbtTagParser {
 	}
 	
 	private void addListToTooltip(List<Text> tooltip, NbtElement base, String pad, String padIncrement) {
-		AbstractNbtList<?> tag = (AbstractNbtList<?>) base;
+		AbstractNbtList tag = (AbstractNbtList) base;
 		Iterator<? extends NbtElement> iter = tag.iterator();
 		while (iter.hasNext()) {
 			NbtElement nbtnext = iter.next();

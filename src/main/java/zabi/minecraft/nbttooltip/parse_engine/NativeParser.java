@@ -31,7 +31,7 @@ public class NativeParser implements NbtTagParser {
 		} else if (tag instanceof NbtString) {
 			return tag.toString();
 		} else if (tag instanceof AbstractNbtList) {
-			return String.format("[%s%s]", listIdentifier((AbstractNbtList<?>) tag), unwrapList((AbstractNbtList<?>) tag));
+			return String.format("[%s%s]", listIdentifier((AbstractNbtList) tag), unwrapList((AbstractNbtList) tag));
 		} else if (tag instanceof NbtCompound) {
 			return String.format("{%s}", unwrapCompound((NbtCompound) tag));
 		}
@@ -52,20 +52,20 @@ public class NativeParser implements NbtTagParser {
 		return sb.substring(0, sb.toString().length() - 1); //Remove last comma
 	}
 
-	private String unwrapList(AbstractNbtList<?> tag) {
+	private String unwrapList(AbstractNbtList tag) {
 		if (tag.size() == 0) {
 			return "";
 		}
 		StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < tag.size() - 1; i++) {
-			sb.append(unwrap(tag.get(i)));
+			sb.append(unwrap(tag.method_10536(i)));
 			sb.append(',');
 		}
-		sb.append(unwrap(tag.get(tag.size() - 1)));
+		sb.append(unwrap(tag.method_10536(tag.size() - 1)));
 		return sb.toString();
 	}
 	
-	private String listIdentifier(AbstractNbtList<?> tag) {
+	private String listIdentifier(AbstractNbtList tag) {
 		if (tag instanceof NbtByteArray) {
 			return "B;";
 		} else if (tag instanceof NbtIntArray) {

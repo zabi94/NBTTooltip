@@ -75,17 +75,37 @@ public class ConfigScreenProvider implements ModMenuApi {
 					.setSaveConsumer(val -> ModConfig.INSTANCE.ctrlSuppressesRest = val)
 					.build()
 		);
-		
+
 		general.addEntry(configBuilder.entryBuilder()
 				.startBooleanToggle(Text.translatable("nbttooltip.config.splitLongLines") , ModConfig.INSTANCE.splitLongLines)
-					.setDefaultValue(true)
-					.setTooltip(
-							Text.translatable("nbttooltip.config.splitLongLines.line1"),
-							Text.translatable("nbttooltip.config.splitLongLines.line2") 
-					)
-					.setSaveConsumer(val -> ModConfig.INSTANCE.splitLongLines = val)
-					.build()
+				.setDefaultValue(true)
+				.setTooltip(
+						Text.translatable("nbttooltip.config.splitLongLines.line1"),
+						Text.translatable("nbttooltip.config.splitLongLines.line2")
+				)
+				.setSaveConsumer(val -> ModConfig.INSTANCE.splitLongLines = val)
+				.build()
 		);
+
+        general.addEntry(configBuilder.entryBuilder()
+                .startBooleanToggle(Text.translatable("nbttooltip.config.hideLore") , ModConfig.INSTANCE.hideLore)
+                .setDefaultValue(false)
+                .setTooltip(
+                        Text.translatable("nbttooltip.config.hideLore.line")
+                )
+                .setSaveConsumer(val -> ModConfig.INSTANCE.hideLore = val)
+                .build()
+        );
+
+        general.addEntry(configBuilder.entryBuilder()
+                .startBooleanToggle(Text.translatable("nbttooltip.config.hideDisplayName") , ModConfig.INSTANCE.hideDisplayName)
+                .setDefaultValue(false)
+                .setTooltip(
+                        Text.translatable("nbttooltip.config.hideDisplayName.line")
+                )
+                .setSaveConsumer(val -> ModConfig.INSTANCE.hideDisplayName = val)
+                .build()
+        );
 		
 		general.addEntry(configBuilder.entryBuilder()
 				.startIntField(Text.translatable("nbttooltip.config.maxLinesShown"), ModConfig.INSTANCE.maxLinesShown)
@@ -97,8 +117,6 @@ public class ConfigScreenProvider implements ModMenuApi {
 					.setSaveConsumer(val -> ModConfig.INSTANCE.maxLinesShown = val)
 					.build()
 		);
-		
-
 		
 		general.addEntry(configBuilder.entryBuilder()
 				.startIntField(Text.translatable("nbttooltip.config.ticksBeforeScroll"), ModConfig.INSTANCE.ticksBeforeScroll)

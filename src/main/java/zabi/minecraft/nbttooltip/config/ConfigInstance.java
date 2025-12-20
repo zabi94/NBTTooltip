@@ -16,6 +16,8 @@ public class ConfigInstance {
 	public int ticksBeforeScroll;
 	public boolean ctrlSuppressesRest;
 	public boolean splitLongLines;
+    public boolean hideLore;
+    public boolean hideDisplayName;
 	
 	public TooltipEngine tooltipEngine;
 	public CopyingEngine copyingEngine;
@@ -29,6 +31,8 @@ public class ConfigInstance {
 		ticksBeforeScroll = 20;
 		ctrlSuppressesRest = true;
 		splitLongLines = true;
+        hideLore = false;
+        hideDisplayName = false;
 		tooltipEngine = TooltipEngine.FRIENDLY;
 		copyingEngine = CopyingEngine.JSON;
 	}

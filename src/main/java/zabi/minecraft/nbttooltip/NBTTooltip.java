@@ -3,6 +3,7 @@ package zabi.minecraft.nbttooltip;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.minecraft.util.Identifier;
 import org.lwjgl.glfw.GLFW;
 
 import com.mojang.serialization.DataResult;
@@ -28,6 +29,7 @@ import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
+import org.lwjgl.opengl.GL;
 import zabi.minecraft.nbttooltip.config.ModConfig;
 import zabi.minecraft.nbttooltip.parse_engine.NbtTagParser;
 
@@ -39,11 +41,12 @@ public class NBTTooltip implements ClientModInitializer {
 	public static final String FORMAT = Formatting.ITALIC.toString() + Formatting.DARK_GRAY;
 
 	public static final int WAITTIME_BEFORE_FAST_SCROLL = 10;
+    public static final KeyBinding.Category nbttooltipCategory = new KeyBinding.Category(Identifier.of("key.category.nbttooltip"));
 
-	public static KeyBinding COPY_TO_CLIPBOARD = new KeyBinding("key.nbttooltip.copy", InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_RIGHT, "key.category.nbttooltip");
-	public static KeyBinding TOGGLE_NBT = new KeyBinding("key.nbttooltip.toggle", InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_LEFT, "key.category.nbttooltip");
-	public static KeyBinding SCROLL_UP = new KeyBinding("key.nbttooltip.scroll_up", InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_UP, "key.category.nbttooltip");
-	public static KeyBinding SCROLL_DOWN = new KeyBinding("key.nbttooltip.scroll_down", InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_DOWN, "key.category.nbttooltip");
+	public static KeyBinding COPY_TO_CLIPBOARD = new KeyBinding("key.nbttooltip.copy", InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_RIGHT, nbttooltipCategory);
+	public static KeyBinding TOGGLE_NBT = new KeyBinding("key.nbttooltip.toggle", InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_LEFT, nbttooltipCategory);
+	public static KeyBinding SCROLL_UP = new KeyBinding("key.nbttooltip.scroll_up", InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_UP, nbttooltipCategory);
+	public static KeyBinding SCROLL_DOWN = new KeyBinding("key.nbttooltip.scroll_down", InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_DOWN, nbttooltipCategory);
 
 	public static boolean flipflop_key_copy = false;
 	public static boolean flipflop_key_toggle = false;
@@ -71,10 +74,13 @@ public class NBTTooltip implements ClientModInitializer {
 
 		if (autoscroll_locks > 0) autoscroll_locks--;
 
-		if (!Screen.hasShiftDown() && !isPressed(mc, SCROLL_DOWN) && !isPressed(mc, SCROLL_UP) && autoscroll_locks == 0) {
+        boolean isShiftDown = InputUtil.isKeyPressed(MinecraftClient.getInstance().getWindow(), InputUtil.fromTranslationKey("key.keyboard.left.shift").getCode());
+        boolean isAltDown = InputUtil.isKeyPressed(MinecraftClient.getInstance().getWindow(), InputUtil.fromTranslationKey("key.keyboard.left.alt").getCode());
+
+		if (!isShiftDown && !isPressed(mc, SCROLL_DOWN) && !isPressed(mc, SCROLL_UP) && autoscroll_locks == 0) {
 			NBTTooltip.ticks++;
 			int factor = 1;
-			if (Screen.hasAltDown()) {
+			if (isAltDown) {
 				factor = 4;
 			}
 			if (NBTTooltip.ticks >= ModConfig.INSTANCE.ticksBeforeScroll / factor) {
@@ -118,7 +124,7 @@ public class NBTTooltip implements ClientModInitializer {
 	}
 
 	private static boolean isPressed(MinecraftClient mc, KeyBinding key) {
-		return !key.isUnbound() && InputUtil.isKeyPressed(mc.getWindow().getHandle(), InputUtil.fromTranslationKey(key.getBoundKeyTranslationKey()).getCode());
+		return !key.isUnbound() && InputUtil.isKeyPressed(mc.getWindow(), InputUtil.fromTranslationKey(key.getBoundKeyTranslationKey()).getCode());
 	}
 
 	public static ArrayList<Text> transformTtip(ArrayList<Text> ttip, int lines) {
@@ -144,12 +150,33 @@ public class NBTTooltip implements ClientModInitializer {
 		return newttip;
 	}
 
-	public static void onInjectTooltip(ItemStack stack, Item.TooltipContext context, TooltipType type, List<Text> list) {
+    private static NbtCompound removeLoreFromTag(NbtCompound tag) {
+        NbtCompound copy = tag.copy();
+
+        if (copy.contains("minecraft:lore")) {
+            copy.remove("minecraft:lore");
+        }
+
+        return copy;
+    }
+
+    private static NbtCompound removeDisplayNameFromTag(NbtCompound tag) {
+        NbtCompound copy = tag.copy();
+
+        if (copy.contains("minecraft:custom_name")) {
+            copy.remove("minecraft:custom_name");
+        }
+
+        return copy;
+    }
+
+    public static void onInjectTooltip(ItemStack stack, Item.TooltipContext context, TooltipType type, List<Text> list) {
 		handleClipboardCopy(stack);
 		if (ModConfig.INSTANCE.triggerType.shouldShowTooltip(context, type)) {
 			if (autoscroll_locks > 0) autoscroll_locks = 2;
 			int lines = ModConfig.INSTANCE.maxLinesShown;
-			if (ModConfig.INSTANCE.ctrlSuppressesRest && Screen.hasControlDown()) {
+            boolean hasControlDown = InputUtil.isKeyPressed(MinecraftClient.getInstance().getWindow(), GLFW.GLFW_KEY_LEFT_CONTROL);
+            if (ModConfig.INSTANCE.ctrlSuppressesRest && hasControlDown) {
 				lines += list.size();
 				list.clear();
 			} else {
@@ -159,14 +186,20 @@ public class NBTTooltip implements ClientModInitializer {
 			ArrayList<Text> ttip = new ArrayList<>(lines);
 			NbtCompound tag = encodeStack(stack, context.getRegistryLookup().getOps(NbtOps.INSTANCE));
 			if (!tag.isEmpty()) {
+                if (ModConfig.INSTANCE.hideLore) {
+                    tag = removeLoreFromTag(tag);
+                }
+                if (ModConfig.INSTANCE.hideDisplayName) {
+                    tag = removeDisplayNameFromTag(tag);
+                }
 				if (ModConfig.INSTANCE.showDelimiters) {
 					ttip.add(Text.literal(Formatting.DARK_PURPLE + " - nbt start -"));
 				}
-				if (ModConfig.INSTANCE.compress) {
-					ttip.add(Text.literal(FORMAT + tag));
-				} else {
-					getRenderingEngine().parseTagToList(ttip, tag, ModConfig.INSTANCE.splitLongLines);
-				}
+                if (ModConfig.INSTANCE.compress) {
+                    ttip.add(Text.literal(FORMAT + tag));
+                } else {
+                    getRenderingEngine().parseTagToList(ttip, tag, ModConfig.INSTANCE.splitLongLines);
+                }
 				if (ModConfig.INSTANCE.showDelimiters) {
 					ttip.add(Text.literal(Formatting.DARK_PURPLE + " - nbt end -"));
 				}
