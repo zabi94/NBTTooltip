@@ -5,6 +5,7 @@
 	"key.nbttooltip.copy": "Copy NBT",
 	"key.nbttooltip.toggle": "Toggle NBT",
 	"key.category.nbttooltip": "NBT Tooltip",
+	"key.category.nbttooltip.main": "NBT Tooltip",
 	"key.nbttooltip.scroll_down": "Scroll NBT down",
 	"key.nbttooltip.scroll_up": "Scroll NBT up",
 	

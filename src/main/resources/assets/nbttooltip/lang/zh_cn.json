@@ -5,6 +5,7 @@
 	"key.nbttooltip.copy": "复制 NBT",
 	"key.nbttooltip.toggle": "切换 NBT",
 	"key.category.nbttooltip": "NBT 工具提示(NBT Tooltip)",
+	"key.category.nbttooltip.main": "NBT 工具提示(NBT Tooltip)",
 	"key.nbttooltip.scroll_down": "向下滚动 NBT",
 	"key.nbttooltip.scroll_up": "向上滚动 NBT",
 	

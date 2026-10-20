@@ -5,6 +5,7 @@
 	"key.nbttooltip.copy": "Копировать nbt",
 	"key.nbttooltip.toggle": "Переключить nbt",
 	"key.category.nbttooltip": "NBT Tooltip",
+	"key.category.nbttooltip.main": "NBT Tooltip",
 	"key.nbttooltip.scroll_down": "Прокрутить nbt вниз",
 	"key.nbttooltip.scroll_up": "Прокрутить nbt вверх",
 	

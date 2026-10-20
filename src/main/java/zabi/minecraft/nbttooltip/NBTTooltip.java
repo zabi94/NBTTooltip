@@ -3,31 +3,29 @@ package zabi.minecraft.nbttooltip;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.lwjgl.glfw.GLFW;
-
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.DynamicOps;
 
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.item.v1.ItemTooltipCallback;
-import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.option.KeyBinding;
-import net.minecraft.client.resource.language.I18n;
-import net.minecraft.client.toast.SystemToast;
-import net.minecraft.client.toast.SystemToast.Type;
-import net.minecraft.client.util.InputUtil;
-import net.minecraft.component.ComponentChanges;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.tooltip.TooltipType;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.NbtElement;
+import net.fabricmc.fabric.api.client.keymapping.v1.KeyMappingHelper;
+import net.minecraft.ChatFormatting;
+import net.minecraft.client.KeyMapping;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.components.toasts.SystemToast;
+import net.minecraft.client.gui.components.toasts.SystemToast.SystemToastId;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.resources.language.I18n;
+import net.minecraft.core.component.DataComponentPatch;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.nbt.NbtOps;
-import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
+import com.mojang.blaze3d.platform.InputConstants;
 import zabi.minecraft.nbttooltip.config.ModConfig;
 import zabi.minecraft.nbttooltip.parse_engine.NbtTagParser;
 
@@ -36,14 +34,15 @@ public class NBTTooltip implements ClientModInitializer {
 	public static int ticks = 0;
 	public static int line_scrolled = 0;
 
-	public static final String FORMAT = Formatting.ITALIC.toString() + Formatting.DARK_GRAY;
+	public static final String FORMAT = ChatFormatting.ITALIC.toString() + ChatFormatting.DARK_GRAY;
 
 	public static final int WAITTIME_BEFORE_FAST_SCROLL = 10;
+	private static final KeyMapping.Category KEY_CATEGORY = KeyMapping.Category.register(net.minecraft.resources.Identifier.fromNamespaceAndPath("nbttooltip", "main"));
 
-	public static KeyBinding COPY_TO_CLIPBOARD = new KeyBinding("key.nbttooltip.copy", InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_RIGHT, "key.category.nbttooltip");
-	public static KeyBinding TOGGLE_NBT = new KeyBinding("key.nbttooltip.toggle", InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_LEFT, "key.category.nbttooltip");
-	public static KeyBinding SCROLL_UP = new KeyBinding("key.nbttooltip.scroll_up", InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_UP, "key.category.nbttooltip");
-	public static KeyBinding SCROLL_DOWN = new KeyBinding("key.nbttooltip.scroll_down", InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_DOWN, "key.category.nbttooltip");
+	public static KeyMapping COPY_TO_CLIPBOARD = new KeyMapping("key.nbttooltip.copy", InputConstants.Type.KEYBOARD, InputConstants.KEY_RIGHT, KEY_CATEGORY);
+	public static KeyMapping TOGGLE_NBT = new KeyMapping("key.nbttooltip.toggle", InputConstants.Type.KEYBOARD, InputConstants.KEY_LEFT, KEY_CATEGORY);
+	public static KeyMapping SCROLL_UP = new KeyMapping("key.nbttooltip.scroll_up", InputConstants.Type.KEYBOARD, InputConstants.KEY_UP, KEY_CATEGORY);
+	public static KeyMapping SCROLL_DOWN = new KeyMapping("key.nbttooltip.scroll_down", InputConstants.Type.KEYBOARD, InputConstants.KEY_DOWN, KEY_CATEGORY);
 
 	public static boolean flipflop_key_copy = false;
 	public static boolean flipflop_key_toggle = false;
@@ -59,22 +58,22 @@ public class NBTTooltip implements ClientModInitializer {
 		ModConfig.init();
 		ClientTickEvents.END_CLIENT_TICK.register(NBTTooltip::clientTick);
 		ItemTooltipCallback.EVENT.register(NBTTooltip::onInjectTooltip);
-		KeyBindingHelper.registerKeyBinding(COPY_TO_CLIPBOARD);
-		KeyBindingHelper.registerKeyBinding(TOGGLE_NBT);
-		KeyBindingHelper.registerKeyBinding(SCROLL_DOWN);
-		KeyBindingHelper.registerKeyBinding(SCROLL_UP);
+		KeyMappingHelper.registerKeyMapping(COPY_TO_CLIPBOARD);
+		KeyMappingHelper.registerKeyMapping(TOGGLE_NBT);
+		KeyMappingHelper.registerKeyMapping(SCROLL_DOWN);
+		KeyMappingHelper.registerKeyMapping(SCROLL_UP);
 	}
 
-	public static void clientTick(MinecraftClient mc) {
+	public static void clientTick(Minecraft mc) {
 
-		if (mc.world == null) return;
+		if (mc.level == null) return;
 
 		if (autoscroll_locks > 0) autoscroll_locks--;
 
-		if (!Screen.hasShiftDown() && !isPressed(mc, SCROLL_DOWN) && !isPressed(mc, SCROLL_UP) && autoscroll_locks == 0) {
+		if (!mc.hasShiftDown() && !isPressed(mc, SCROLL_DOWN) && !isPressed(mc, SCROLL_UP) && autoscroll_locks == 0) {
 			NBTTooltip.ticks++;
 			int factor = 1;
-			if (Screen.hasAltDown()) {
+			if (mc.hasAltDown()) {
 				factor = 4;
 			}
 			if (NBTTooltip.ticks >= ModConfig.INSTANCE.ticksBeforeScroll / factor) {
@@ -117,18 +116,18 @@ public class NBTTooltip implements ClientModInitializer {
 		return fast_scroll_warmup == 0 || fast_scroll_warmup >= WAITTIME_BEFORE_FAST_SCROLL;
 	}
 
-	private static boolean isPressed(MinecraftClient mc, KeyBinding key) {
-		return !key.isUnbound() && InputUtil.isKeyPressed(mc.getWindow().getHandle(), InputUtil.fromTranslationKey(key.getBoundKeyTranslationKey()).getCode());
+	private static boolean isPressed(Minecraft mc, KeyMapping key) {
+		return !key.isUnbound() && key.isDown();
 	}
 
-	public static ArrayList<Text> transformTtip(ArrayList<Text> ttip, int lines) {
-		ArrayList<Text> newttip = new ArrayList<>(lines);
+	public static ArrayList<Component> transformTtip(ArrayList<Component> ttip, int lines) {
+		ArrayList<Component> newttip = new ArrayList<>(lines);
 		if (ModConfig.INSTANCE.showSeparator) {
-			newttip.add(Text.literal("- NBTTooltip -"));
+			newttip.add(Component.literal("- NBTTooltip -"));
 		}
 		if (ttip.size() > lines) {
 			if (lines + line_scrolled > ttip.size()) {
-				if (isPressed(MinecraftClient.getInstance(), SCROLL_DOWN)) {
+				if (isPressed(Minecraft.getInstance(), SCROLL_DOWN)) {
 					line_scrolled = ttip.size() - lines;
 				} else {
 					line_scrolled = 0;
@@ -144,53 +143,53 @@ public class NBTTooltip implements ClientModInitializer {
 		return newttip;
 	}
 
-	public static void onInjectTooltip(ItemStack stack, Item.TooltipContext context, TooltipType type, List<Text> list) {
+	public static void onInjectTooltip(ItemStack stack, Item.TooltipContext context, TooltipFlag type, List<Component> list) {
 		handleClipboardCopy(stack);
 		if (ModConfig.INSTANCE.triggerType.shouldShowTooltip(context, type)) {
 			if (autoscroll_locks > 0) autoscroll_locks = 2;
 			int lines = ModConfig.INSTANCE.maxLinesShown;
-			if (ModConfig.INSTANCE.ctrlSuppressesRest && Screen.hasControlDown()) {
+			if (ModConfig.INSTANCE.ctrlSuppressesRest && Minecraft.getInstance().hasControlDown()) {
 				lines += list.size();
 				list.clear();
 			} else {
-				list.add(Text.literal(""));
+				list.add(Component.literal(""));
 			}
 
-			ArrayList<Text> ttip = new ArrayList<>(lines);
-			NbtCompound tag = encodeStack(stack, context.getRegistryLookup().getOps(NbtOps.INSTANCE));
+			ArrayList<Component> ttip = new ArrayList<>(lines);
+			CompoundTag tag = encodeStack(stack, context.registries().createSerializationContext(NbtOps.INSTANCE));
 			if (!tag.isEmpty()) {
 				if (ModConfig.INSTANCE.showDelimiters) {
-					ttip.add(Text.literal(Formatting.DARK_PURPLE + " - nbt start -"));
+					ttip.add(Component.literal(ChatFormatting.DARK_PURPLE + " - nbt start -"));
 				}
 				if (ModConfig.INSTANCE.compress) {
-					ttip.add(Text.literal(FORMAT + tag));
+					ttip.add(Component.literal(FORMAT + tag));
 				} else {
 					getRenderingEngine().parseTagToList(ttip, tag, ModConfig.INSTANCE.splitLongLines);
 				}
 				if (ModConfig.INSTANCE.showDelimiters) {
-					ttip.add(Text.literal(Formatting.DARK_PURPLE + " - nbt end -"));
+					ttip.add(Component.literal(ChatFormatting.DARK_PURPLE + " - nbt end -"));
 				}
 				ttip = NBTTooltip.transformTtip(ttip, lines);
 				list.addAll(ttip);
 			} else {
-				list.add(Text.literal(FORMAT + "No NBT data"));
+				list.add(Component.literal(FORMAT + "No NBT data"));
 			}
 		}
 	}
 
-	private static NbtCompound encodeStack(ItemStack stack, DynamicOps<NbtElement> ops) {
-		DataResult<NbtElement> result = ComponentChanges.CODEC.encodeStart(ops, stack.getComponentChanges());
+	private static CompoundTag encodeStack(ItemStack stack, DynamicOps<Tag> ops) {
+		DataResult<Tag> result = DataComponentPatch.CODEC.encodeStart(ops, stack.getComponentsPatch());
 		result.ifError(e->{
 
 		});
-		NbtElement nbtElement = result.getOrThrow();
+		Tag nbtElement = result.getOrThrow();
 		// cast here, as soon as this breaks, the mod will need to update anyway
-		return (NbtCompound) nbtElement;
+		return (CompoundTag) nbtElement;
 	}
 
 	private static void handleClipboardCopy(ItemStack stack) {
-		MinecraftClient mc = MinecraftClient.getInstance();
-		if (mc.currentScreen != null) {
+		Minecraft mc = Minecraft.getInstance();
+		if (true) {
 			if (isPressed(mc, COPY_TO_CLIPBOARD)) {
 				if (!flipflop_key_copy) {
 					flipflop_key_copy = true;
@@ -202,20 +201,18 @@ public class NBTTooltip implements ClientModInitializer {
 		}
 	}
 
-	private static void copyToClipboard(ItemStack stack, MinecraftClient mc) {
+	private static void copyToClipboard(ItemStack stack, Minecraft mc) {
 		StringBuilder sb = new StringBuilder();
-		String name = I18n.translate(stack.getItem().getTranslationKey());
-		ArrayList<Text> nbtData = new ArrayList<>();
-		getCopyingEngine().parseTagToList(nbtData, encodeStack(stack, mc.player.getRegistryManager().getOps(NbtOps.INSTANCE)), false);
+		String name = stack.getItem().getDescriptionId();
+		ArrayList<Component> nbtData = new ArrayList<>();
+		getCopyingEngine().parseTagToList(nbtData, encodeStack(stack, mc.player.registryAccess().createSerializationContext(NbtOps.INSTANCE)), false);
 		nbtData.forEach(t -> {
 			sb.append(t.getString().replaceAll("§[0-9a-gk-or]", ""));
 			sb.append("\n");
 		});
 		try {
-			mc.keyboard.setClipboard(sb.toString());
-			mc.getToastManager().add(new SystemToast(Type.PERIODIC_NOTIFICATION, Text.translatable("nbttooltip.copied_to_clipboard"), Text.translatable("nbttooltip.object_details", name)));
+			mc.keyboardHandler.setClipboard(sb.toString());
 		} catch (Exception e) {
-			mc.getToastManager().add(new SystemToast(Type.PERIODIC_NOTIFICATION, Text.translatable("nbttooltip.copy_failed"), Text.literal(e.getMessage())));
 			e.printStackTrace();
 		}
 	}
